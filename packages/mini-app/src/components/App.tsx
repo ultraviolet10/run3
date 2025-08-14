@@ -1,89 +1,39 @@
 "use client";
 
-import { useEffect } from "react";
 import { useMiniApp } from "@neynar/react";
-import { Header } from "~/components/ui/Header";
-import { Footer } from "~/components/ui/Footer";
-import { HomeTab, ProfileTab, WalletTab } from "~/components/ui/tabs";
-import { USE_WALLET } from "~/lib/constants";
-import { useNeynarUser } from "../hooks/useNeynarUser";
+import { PreContestScreen } from "~/screens/PreContestScreen";
 
 // --- Types ---
-export enum Tab {
-  Home = "home",
-  Profile = "profile",
-  Wallet = "wallet",
-}
 
 export interface AppProps {
   title?: string;
 }
 
 /**
- * App component serves as the main container for the mini app interface.
- * 
- * This component orchestrates the overall mini app experience by:
- * - Managing tab navigation and state
- * - Handling Farcaster mini app initialization
- * - Coordinating wallet and context state
- * - Providing error handling and loading states
- * - Rendering the appropriate tab content based on user selection
- * 
- * The component integrates with the Neynar SDK for Farcaster functionality
- * and Wagmi for wallet management. It provides a complete mini app
- * experience with multiple tabs for different functionality areas.
- * 
- * Features:
- * - Tab-based navigation (Home, Actions, Context, Wallet)
- * - Farcaster mini app integration
- * - Wallet connection management
- * - Error handling and display
- * - Loading states for async operations
- * 
+ * Flip App - Creator Battle Mini App
+ *
+ * This is the main container for the Flip mini app, featuring:
+ * - Pre-contest screen showing upcoming creator battles
+ * - Clean, minimal UI with purple/pink gradient theme
+ * - Integration with Zora creator profiles
+ * - Real-time countdown timer to contest start
+ *
  * @param props - Component props
- * @param props.title - Optional title for the mini app (defaults to "Neynar Starter Kit")
- * 
- * @example
- * ```tsx
- * <App title="My Mini App" />
- * ```
+ * @param props.title - Optional title for the mini app (defaults to "Flip")
  */
 export default function App(
-  { title }: AppProps = { title: "Neynar Starter Kit" }
+  { title: _title }: AppProps = { title: "Flip" }
 ) {
   // --- Hooks ---
-  const {
-    isSDKLoaded,
-    context,
-    setInitialTab,
-    setActiveTab,
-    currentTab,
-  } = useMiniApp();
-
-  // --- Neynar user hook ---
-  const { user: neynarUser } = useNeynarUser(context || undefined);
-
-  // --- Effects ---
-  /**
-   * Sets the initial tab to "home" when the SDK is loaded.
-   * 
-   * This effect ensures that users start on the home tab when they first
-   * load the mini app. It only runs when the SDK is fully loaded to
-   * prevent errors during initialization.
-   */
-  useEffect(() => {
-    if (isSDKLoaded) {
-      setInitialTab(Tab.Home);
-    }
-  }, [isSDKLoaded, setInitialTab]);
+  const { isSDKLoaded, context } = useMiniApp();
 
   // --- Early Returns ---
   if (!isSDKLoaded) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen bg-black">
         <div className="text-center">
-          <div className="spinner h-8 w-8 mx-auto mb-4"></div>
-          <p>Loading SDK...</p>
+          <div className="w-8 h-8 mx-auto mb-4 border-4 border-gray-800 border-t-green-500 rounded-full animate-spin"></div>
+          <p className="text-gray-400">Loading Flip...</p>
         </div>
       </div>
     );
@@ -99,23 +49,7 @@ export default function App(
         paddingRight: context?.client.safeAreaInsets?.right ?? 0,
       }}
     >
-      {/* Header should be full width */}
-      <Header neynarUser={neynarUser} />
-
-      {/* Main content and footer should be centered */}
-      <div className="container py-2 pb-20">
-        {/* Main title */}
-        <h1 className="text-2xl font-bold text-center mb-4">{title}</h1>
-
-        {/* Tab content rendering */}
-        {currentTab === Tab.Home && <HomeTab />}
-        {currentTab === Tab.Profile && <ProfileTab />}
-        {currentTab === Tab.Wallet && <WalletTab />}
-
-        {/* Footer with navigation */}
-        <Footer activeTab={currentTab as Tab} setActiveTab={setActiveTab} showWallet={USE_WALLET} />
-      </div>
+      <PreContestScreen />
     </div>
   );
 }
-
