@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { getZoraProfile } from "~/lib/getZoraProfile";
-import { getCreatorCoinsByAddress, ProfileCoinsData } from "~/lib/getCreatorCoins";
+import {
+  getCreatorCoinsByAddress,
+  ProfileCoinsData,
+} from "~/lib/getCreatorCoins";
 import { ProfileData } from "~/types/profile";
 import { ExternalLink, TrendingUp, DollarSign, Users } from "lucide-react";
 
@@ -15,7 +18,7 @@ type CreatorPostProps = {
 const getPostDataFromCoins = (coinsData: ProfileCoinsData | null) => {
   // Get the first (most recent) coin if available
   const firstCoin = coinsData?.profile?.createdCoins?.edges?.[0]?.node;
-  
+
   if (!firstCoin) {
     return {
       imageUrl: "/api/placeholder/96/96",
@@ -24,18 +27,21 @@ const getPostDataFromCoins = (coinsData: ProfileCoinsData | null) => {
       totalVolume: "$0.00",
       creatorEarnings: "$0.00",
       zoraUrl: "https://zora.co",
-      uniqueHolders: 0
+      uniqueHolders: 0,
     };
   }
 
   return {
-    imageUrl: firstCoin.mediaContent?.previewImage?.medium || "/api/placeholder/96/96",
+    imageUrl:
+      firstCoin.mediaContent?.previewImage?.medium || "/api/placeholder/96/96",
     title: firstCoin.name || "Untitled Coin",
     marketCap: firstCoin.marketCap ? `$${firstCoin.marketCap}` : "$0.00",
     totalVolume: firstCoin.totalVolume ? `$${firstCoin.totalVolume}` : "$0.00",
-    creatorEarnings: firstCoin.marketCapDelta24h ? `$${Math.abs(parseFloat(firstCoin.marketCapDelta24h)).toFixed(2)}` : "$0.00",
+    creatorEarnings: firstCoin.marketCapDelta24h
+      ? `$${Math.abs(parseFloat(firstCoin.marketCapDelta24h)).toFixed(2)}`
+      : "$0.00",
     zoraUrl: `https://zora.co/coin/base:${firstCoin.address}`,
-    uniqueHolders: firstCoin.uniqueHolders || 0
+    uniqueHolders: firstCoin.uniqueHolders || 0,
   };
 };
 
@@ -53,40 +59,15 @@ export function CreatorPost({ creatorAddress, _isFirst }: CreatorPostProps) {
       try {
         setLoading(true);
         setError(null);
-        
+
         // Fetch both profile and coins data in parallel
         const [profile, coins] = await Promise.all([
           getZoraProfile(creatorAddress),
-          getCreatorCoinsByAddress(creatorAddress, 10)
+          getCreatorCoinsByAddress(creatorAddress, 10),
         ]);
-        
+
         setCreator(profile);
         setCoinsData(coins);
-        
-        // Log the coins data to see what we get
-        console.log(`=== Coins data for ${creatorAddress} ===`);
-        console.log('Full response:', coins);
-        
-        if (coins?.profile?.createdCoins) {
-          console.log(`Found ${coins.profile.createdCoins.count} coins`);
-          coins.profile.createdCoins.edges?.forEach((edge, index) => {
-            const coin = edge.node;
-            console.log(`Coin ${index + 1}:`, {
-              name: coin?.name,
-              symbol: coin?.symbol,
-              description: coin?.description,
-              marketCap: coin?.marketCap,
-              totalVolume: coin?.totalVolume,
-              volume24h: coin?.volume24h,
-              uniqueHolders: coin?.uniqueHolders,
-              address: coin?.address,
-              mediaContent: coin?.mediaContent,
-            });
-          });
-        } else {
-          console.log('No coins found for this creator');
-        }
-        
       } catch (err) {
         console.error("Error loading creator data:", err);
         setError("Failed to load creator data");
@@ -99,7 +80,7 @@ export function CreatorPost({ creatorAddress, _isFirst }: CreatorPostProps) {
   }, [creatorAddress]);
 
   const handleBuyOnZora = () => {
-    window.open(postData.zoraUrl, '_blank');
+    window.open(postData.zoraUrl, "_blank");
   };
 
   if (loading) {
@@ -141,7 +122,9 @@ export function CreatorPost({ creatorAddress, _isFirst }: CreatorPostProps) {
         />
         <div>
           <h3 className="text-white font-semibold text-sm">
-            {creator.profile?.displayName || creator.profile?.handle || "Unknown Creator"}
+            {creator.profile?.displayName ||
+              creator.profile?.handle ||
+              "Unknown Creator"}
           </h3>
           <p className="text-gray-400 text-xs">
             @{creator.profile?.username || creator.profile?.handle || "unknown"}
@@ -167,7 +150,7 @@ export function CreatorPost({ creatorAddress, _isFirst }: CreatorPostProps) {
             <h4 className="text-white font-semibold text-sm">
               {postData.title}
             </h4>
-            
+
             {/* Stats Grid */}
             <div className="grid grid-cols-3 gap-3">
               {/* Market Cap */}

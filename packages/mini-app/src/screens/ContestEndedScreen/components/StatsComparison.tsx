@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { getZoraProfile } from "~/lib/getZoraProfile";
-import { getCreatorCoinsByAddress, ProfileCoinsData } from "~/lib/getCreatorCoins";
+import {
+  getCreatorCoinsByAddress,
+  ProfileCoinsData,
+} from "~/lib/getCreatorCoins";
 import { ProfileData } from "~/types/profile";
 import { TrendingUp, DollarSign, Users, Crown } from "lucide-react";
 
@@ -16,35 +19,37 @@ type StatsComparisonProps = {
 const getStatsFromCoins = (coinsData: ProfileCoinsData | null) => {
   // Get the first (most recent) coin if available
   const firstCoin = coinsData?.profile?.createdCoins?.edges?.[0]?.node;
-  
+
   if (!firstCoin) {
     return {
       marketCap: "$0.00",
       totalVolume: "$0.00",
       creatorEarnings: {
         value: "$0.00",
-        isPositive: true
+        isPositive: true,
       },
       totalSupporters: 0,
-      finalScore: 0
+      finalScore: 0,
     };
   }
 
   const marketCap = parseFloat(firstCoin.marketCap || "0");
   const totalVolume = parseFloat(firstCoin.totalVolume || "0");
   const uniqueHolders = firstCoin.uniqueHolders || 0;
-  
+
   // Handle market cap delta (can be positive or negative)
-  const marketCapDelta = firstCoin.marketCapDelta24h ? parseFloat(firstCoin.marketCapDelta24h) : 0;
+  const marketCapDelta = firstCoin.marketCapDelta24h
+    ? parseFloat(firstCoin.marketCapDelta24h)
+    : 0;
   const isPositiveChange = marketCapDelta >= 0;
-  
+
   // Calculate a final score based on multiple metrics
   // For negative market cap changes, we reduce the score contribution
   const finalScore = Math.round(
-    (marketCap * 0.4) + 
-    (totalVolume * 0.3) + 
-    (uniqueHolders * 10) + 
-    (marketCapDelta * 0.3) // Use actual value (positive or negative)
+    marketCap * 0.4 +
+      totalVolume * 0.3 +
+      uniqueHolders * 10 +
+      marketCapDelta * 0.3 // Use actual value (positive or negative)
   );
 
   return {
@@ -52,16 +57,24 @@ const getStatsFromCoins = (coinsData: ProfileCoinsData | null) => {
     totalVolume: `$${totalVolume.toFixed(2)}`,
     creatorEarnings: {
       value: `$${Math.abs(marketCapDelta).toFixed(2)}`,
-      isPositive: isPositiveChange
+      isPositive: isPositiveChange,
     },
     totalSupporters: uniqueHolders,
-    finalScore: Math.max(0, finalScore) // Ensure score is never negative
+    finalScore: Math.max(0, finalScore), // Ensure score is never negative
   };
 };
 
-export function StatsComparison({ creatorAddress1, creatorAddress2, winnerAddress }: StatsComparisonProps) {
-  const [creators, setCreators] = useState<[ProfileData | null, ProfileData | null]>([null, null]);
-  const [coinsData, setCoinsData] = useState<[ProfileCoinsData | null, ProfileCoinsData | null]>([null, null]);
+export function StatsComparison({
+  creatorAddress1,
+  creatorAddress2,
+  winnerAddress,
+}: StatsComparisonProps) {
+  const [creators, setCreators] = useState<
+    [ProfileData | null, ProfileData | null]
+  >([null, null]);
+  const [coinsData, setCoinsData] = useState<
+    [ProfileCoinsData | null, ProfileCoinsData | null]
+  >([null, null]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -73,22 +86,16 @@ export function StatsComparison({ creatorAddress1, creatorAddress2, winnerAddres
       try {
         setLoading(true);
         setError(null);
-        
+
         const [profile1, profile2, coins1, coins2] = await Promise.all([
           getZoraProfile(creatorAddress1),
           getZoraProfile(creatorAddress2),
           getCreatorCoinsByAddress(creatorAddress1, 10),
-          getCreatorCoinsByAddress(creatorAddress2, 10)
+          getCreatorCoinsByAddress(creatorAddress2, 10),
         ]);
-        
+
         setCreators([profile1, profile2]);
         setCoinsData([coins1, coins2]);
-        
-        // Log the coins data for debugging
-        console.log('=== Contest Final Stats ===');
-        console.log('Creator 1 coins:', coins1);
-        console.log('Creator 2 coins:', coins2);
-        
       } catch (err) {
         console.error("Error loading creators:", err);
         setError("Failed to load creator data");
@@ -139,16 +146,22 @@ export function StatsComparison({ creatorAddress1, creatorAddress2, winnerAddres
     );
   }
 
-  const CreatorStatsCard = ({ creator, stats, isWinner }: {
+  const CreatorStatsCard = ({
+    creator,
+    stats,
+    isWinner,
+  }: {
     creator: ProfileData | null;
     stats: any;
     isWinner: boolean;
   }) => (
-    <div className={`relative p-6 rounded-2xl border-2 transition-all ${
-      isWinner 
-        ? 'bg-gradient-to-br from-green-900/30 to-green-800/20 border-green-500/50 shadow-green-500/20 shadow-lg' 
-        : 'bg-gray-900 border-gray-700'
-    }`}>
+    <div
+      className={`relative p-6 rounded-2xl border-2 transition-all ${
+        isWinner
+          ? "bg-gradient-to-br from-green-900/30 to-green-800/20 border-green-500/50 shadow-green-500/20 shadow-lg"
+          : "bg-gray-900 border-gray-700"
+      }`}
+    >
       {/* Winner crown */}
       {isWinner && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -164,15 +177,24 @@ export function StatsComparison({ creatorAddress1, creatorAddress2, winnerAddres
           src={creator?.profile?.avatar?.medium || "/api/placeholder/48/48"}
           alt={creator?.profile?.displayName || "Creator"}
           className={`w-12 h-12 rounded-full border-2 ${
-            isWinner ? 'border-green-400' : 'border-gray-600'
+            isWinner ? "border-green-400" : "border-gray-600"
           }`}
         />
         <div>
-          <h4 className={`font-bold text-sm ${isWinner ? 'text-green-400' : 'text-white'}`}>
-            {creator?.profile?.displayName || creator?.profile?.handle || "Unknown Creator"}
+          <h4
+            className={`font-bold text-sm ${
+              isWinner ? "text-green-400" : "text-white"
+            }`}
+          >
+            {creator?.profile?.displayName ||
+              creator?.profile?.handle ||
+              "Unknown Creator"}
           </h4>
           <p className="text-gray-400 text-xs">
-            @{creator?.profile?.username || creator?.profile?.handle || "unknown"}
+            @
+            {creator?.profile?.username ||
+              creator?.profile?.handle ||
+              "unknown"}
           </p>
         </div>
       </div>
@@ -185,7 +207,11 @@ export function StatsComparison({ creatorAddress1, creatorAddress2, winnerAddres
             <TrendingUp className="w-4 h-4 text-green-400" />
             <span className="text-gray-400 text-sm">Market Cap</span>
           </div>
-          <span className={`font-semibold ${isWinner ? 'text-green-400' : 'text-white'}`}>
+          <span
+            className={`font-semibold ${
+              isWinner ? "text-green-400" : "text-white"
+            }`}
+          >
             {stats.marketCap}
           </span>
         </div>
@@ -196,7 +222,11 @@ export function StatsComparison({ creatorAddress1, creatorAddress2, winnerAddres
             <DollarSign className="w-4 h-4 text-blue-400" />
             <span className="text-gray-400 text-sm">Total Volume</span>
           </div>
-          <span className={`font-semibold ${isWinner ? 'text-green-400' : 'text-white'}`}>
+          <span
+            className={`font-semibold ${
+              isWinner ? "text-green-400" : "text-white"
+            }`}
+          >
             {stats.totalVolume}
           </span>
         </div>
@@ -213,7 +243,15 @@ export function StatsComparison({ creatorAddress1, creatorAddress2, winnerAddres
             ) : (
               <span className="text-red-400">↓</span>
             )}
-            <span className={`font-semibold ${isWinner ? 'text-green-400' : stats.creatorEarnings.isPositive ? 'text-green-400' : 'text-red-400'}`}>
+            <span
+              className={`font-semibold ${
+                isWinner
+                  ? "text-green-400"
+                  : stats.creatorEarnings.isPositive
+                  ? "text-green-400"
+                  : "text-red-400"
+              }`}
+            >
               {stats.creatorEarnings.value}
             </span>
           </div>
@@ -225,16 +263,28 @@ export function StatsComparison({ creatorAddress1, creatorAddress2, winnerAddres
             <Users className="w-4 h-4 text-purple-400" />
             <span className="text-gray-400 text-sm">Unique Holders</span>
           </div>
-          <span className={`font-semibold ${isWinner ? 'text-green-400' : 'text-white'}`}>
+          <span
+            className={`font-semibold ${
+              isWinner ? "text-green-400" : "text-white"
+            }`}
+          >
             {stats.totalSupporters}
           </span>
         </div>
 
         {/* Final Score */}
-        <div className={`pt-4 border-t ${isWinner ? 'border-green-700' : 'border-gray-700'}`}>
+        <div
+          className={`pt-4 border-t ${
+            isWinner ? "border-green-700" : "border-gray-700"
+          }`}
+        >
           <div className="flex items-center justify-between">
             <span className="text-gray-300 font-medium">Final Score</span>
-            <span className={`text-xl font-bold ${isWinner ? 'text-green-400' : 'text-white'}`}>
+            <span
+              className={`text-xl font-bold ${
+                isWinner ? "text-green-400" : "text-white"
+              }`}
+            >
               {stats.finalScore}
             </span>
           </div>
@@ -253,12 +303,12 @@ export function StatsComparison({ creatorAddress1, creatorAddress2, winnerAddres
       </div>
 
       <div className="space-y-4">
-        <CreatorStatsCard 
+        <CreatorStatsCard
           creator={creators[0]}
           stats={stats1}
           isWinner={creatorAddress1 === winnerAddress}
         />
-        <CreatorStatsCard 
+        <CreatorStatsCard
           creator={creators[1]}
           stats={stats2}
           isWinner={creatorAddress2 === winnerAddress}
