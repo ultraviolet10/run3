@@ -1,13 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useMiniApp } from "@neynar/react";
 import { PreContestScreen } from "~/screens/PreContestScreen";
+import { OngoingContestScreen } from "~/screens/OngoingContestScreen";
+import { ContestEndedScreen } from "~/screens/ContestEndedScreen";
 
 // --- Types ---
 
 export interface AppProps {
   title?: string;
 }
+
+type ScreenType = "pre-contest" | "ongoing-contest" | "contest-ended";
 
 /**
  * Flip App - Creator Battle Mini App
@@ -26,6 +31,7 @@ export default function App(
 ) {
   // --- Hooks ---
   const { isSDKLoaded, context } = useMiniApp();
+  const [currentScreen, setCurrentScreen] = useState<ScreenType>("pre-contest");
 
   // --- Early Returns ---
   if (!isSDKLoaded) {
@@ -39,6 +45,28 @@ export default function App(
     );
   }
 
+  // --- Screen Navigation ---
+  const navigateToScreen = (screen: ScreenType) => {
+    setCurrentScreen(screen);
+  };
+
+  // --- Render Current Screen ---
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case "pre-contest":
+        return <PreContestScreen onNavigateToOngoing={() => navigateToScreen("ongoing-contest")} />;
+      case "ongoing-contest":
+        return <OngoingContestScreen 
+          onNavigateToPreContest={() => navigateToScreen("pre-contest")}
+          onNavigateToEnded={() => navigateToScreen("contest-ended")}
+        />;
+      case "contest-ended":
+        return <ContestEndedScreen onNavigateToPreContest={() => navigateToScreen("pre-contest")} />;
+      default:
+        return <PreContestScreen onNavigateToOngoing={() => navigateToScreen("ongoing-contest")} />;
+    }
+  };
+
   // --- Render ---
   return (
     <div
@@ -49,7 +77,7 @@ export default function App(
         paddingRight: context?.client.safeAreaInsets?.right ?? 0,
       }}
     >
-      <PreContestScreen />
+      {renderScreen()}
     </div>
   );
 }
