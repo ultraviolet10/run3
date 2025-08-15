@@ -9,7 +9,11 @@ import { CoinComparison } from "./components/CoinComparison";
 const ARITRA_ADDRESS = "0x8378d9a2c0960a7c3163fe1d7ab74f9b3295a011";
 const KISMET_ADDRESS = "0x91169bfa46481ba2b0db01bfdfd3d5be3d3dceb8";
 
-export function PreContestScreen() {
+type PreContestScreenProps = {
+  onNavigateToOngoing?: () => void;
+};
+
+export function PreContestScreen({ onNavigateToOngoing }: PreContestScreenProps) {
   // Mock contest start time - 2 hours from now
   const contestStartTime = new Date(Date.now() + 2 * 60 * 60 * 1000);
 
@@ -36,12 +40,21 @@ export function PreContestScreen() {
                 Two creators, one winner. Who will you support?
               </p>
             </div>
-            <div className="ml-3">
+            <div className="ml-3 flex space-x-2">
               <CoinComparison
                 coinAddress1={ARITRA_ADDRESS}
                 coinAddress2={KISMET_ADDRESS}
                 startTimestamp={startTimestamp}
               />
+              {/* Test Navigation Button */}
+              {onNavigateToOngoing && (
+                <button
+                  onClick={onNavigateToOngoing}
+                  className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors"
+                >
+                  Test Live
+                </button>
+              )}
             </div>
           </div>
         </div>
