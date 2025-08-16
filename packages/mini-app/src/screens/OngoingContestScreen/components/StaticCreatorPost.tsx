@@ -8,9 +8,9 @@ import {
 } from "~/lib/getCreatorCoins";
 import { ProfileData } from "~/types/profile";
 import { ExternalLink, TrendingUp, DollarSign, Users } from "lucide-react";
-import { useUserAddress } from "~/contexts/UserAddressContext";
 
-type CreatorPostProps = {
+type StaticCreatorPostProps = {
+  creatorAddress: string;
   _isFirst: boolean;
 };
 
@@ -45,8 +45,7 @@ const getPostDataFromCoins = (coinsData: ProfileCoinsData | null) => {
   };
 };
 
-export function CreatorPost({ _isFirst }: CreatorPostProps) {
-  const { userAddress, loading: _addressLoading, error: addressError } = useUserAddress();
+export function StaticCreatorPost({ creatorAddress, _isFirst }: StaticCreatorPostProps) {
   const [creator, setCreator] = useState<ProfileData | null>(null);
   const [coinsData, setCoinsData] = useState<ProfileCoinsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,20 +56,14 @@ export function CreatorPost({ _isFirst }: CreatorPostProps) {
 
   useEffect(() => {
     async function loadCreatorData() {
-      if (!userAddress) {
-        setError(addressError || "Please authenticate to view creator data");
-        setLoading(false);
-        return;
-      }
-
       try {
         setLoading(true);
         setError(null);
 
         // Fetch both profile and coins data in parallel
         const [profile, coins] = await Promise.all([
-          getZoraProfile(userAddress),
-          getCreatorCoinsByAddress(userAddress, 10),
+          getZoraProfile(creatorAddress),
+          getCreatorCoinsByAddress(creatorAddress, 10),
         ]);
 
         setCreator(profile);
@@ -84,7 +77,7 @@ export function CreatorPost({ _isFirst }: CreatorPostProps) {
     }
 
     loadCreatorData();
-  }, [userAddress, addressError]);
+  }, [creatorAddress]);
 
   const handleBuyOnZora = () => {
     window.open(postData.zoraUrl, "_blank");

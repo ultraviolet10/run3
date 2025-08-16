@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useMiniApp } from "@neynar/react";
+import { usePrivy } from "@privy-io/react-auth";
 import { PreContestScreen } from "~/screens/PreContestScreen";
 import { OngoingContestScreen } from "~/screens/OngoingContestScreen";
 import { ContestEndedScreen } from "~/screens/ContestEndedScreen";
+import { AuthScreen } from "~/screens/AuthScreen";
 
 // --- Types ---
 
@@ -31,6 +33,7 @@ export default function App(
 ) {
   // --- Hooks ---
   const { isSDKLoaded, context } = useMiniApp();
+  const { ready, authenticated } = usePrivy();
   const [currentScreen, setCurrentScreen] = useState<ScreenType>("pre-contest");
 
   // --- Early Returns ---
@@ -41,6 +44,22 @@ export default function App(
           <div className="w-8 h-8 mx-auto mb-4 border-4 border-gray-800 border-t-green-500 rounded-full animate-spin"></div>
           <p className="text-gray-400">Loading Flip...</p>
         </div>
+      </div>
+    );
+  }
+
+  // Show authentication screen if not authenticated
+  if (!authenticated || !ready) {
+    return (
+      <div
+        style={{
+          paddingTop: context?.client.safeAreaInsets?.top ?? 0,
+          paddingBottom: context?.client.safeAreaInsets?.bottom ?? 0,
+          paddingLeft: context?.client.safeAreaInsets?.left ?? 0,
+          paddingRight: context?.client.safeAreaInsets?.right ?? 0,
+        }}
+      >
+        <AuthScreen />
       </div>
     );
   }

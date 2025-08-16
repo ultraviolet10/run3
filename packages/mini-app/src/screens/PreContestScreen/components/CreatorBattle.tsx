@@ -5,29 +5,40 @@ import { CreatorCard } from "./CreatorCard";
 import { getZoraProfile } from "~/lib/getZoraProfile";
 import { ProfileData } from "~/types/profile";
 import { Swords } from "lucide-react";
+import { useUserAddress } from "~/contexts/UserAddressContext";
 
-// Creator addresses
-const ARITRA_ADDRESS = "0xbcadc0da9c74d76825af50756ca0f4927a706723";
 const KISMET_ADDRESS = "0x58f19e55058057b04feae2eea88f90b84b7714eb";
 
 export function CreatorBattle() {
-  const [creators, setCreators] = useState<[ProfileData | null, ProfileData | null]>([null, null]);
+  const {
+    userAddress,
+    loading: _addressLoading,
+    error: addressError,
+  } = useUserAddress();
+  const [creators, setCreators] = useState<
+    [ProfileData | null, ProfileData | null]
+  >([null, null]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadCreators() {
+      if (!userAddress) {
+        setError(addressError || "Please authenticate to view creator battle");
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
-        
-        // Fetch both profiles in parallel
-        const [aritrasProfile, kismetProfile] = await Promise.all([
-          getZoraProfile(ARITRA_ADDRESS),
-          getZoraProfile(KISMET_ADDRESS)
+
+        const [userProfile, kismetProfile] = await Promise.all([
+          getZoraProfile(userAddress),
+          getZoraProfile(KISMET_ADDRESS),
         ]);
-        
-        setCreators([aritrasProfile, kismetProfile]);
+
+        setCreators([userProfile, kismetProfile]);
       } catch (err) {
         console.error("Error loading creators:", err);
         setError("Failed to load creator data");
@@ -37,21 +48,16 @@ export function CreatorBattle() {
     }
 
     loadCreators();
-  }, []);
+  }, [userAddress, addressError]);
 
   if (loading) {
     return (
       <div className="px-4 py-6">
         <div className="text-center mb-6">
-          <h2 className="text-xl font-bold text-white mb-2">
-            Creator Battle
-          </h2>
-          <p className="text-gray-400 text-sm">
-            Loading creator profiles...
-          </p>
+          <h2 className="text-xl font-bold text-white mb-2">Creator Battle</h2>
+          <p className="text-gray-400 text-sm">Loading creator profiles...</p>
         </div>
         <div className="space-y-4 mb-6">
-          {/* Loading skeleton */}
           <div className="bg-gray-900 border border-gray-700 rounded-2xl p-4 animate-pulse">
             <div className="h-20 bg-gray-800 rounded"></div>
           </div>
@@ -76,9 +82,7 @@ export function CreatorBattle() {
     return (
       <div className="px-4 py-6">
         <div className="text-center mb-6">
-          <h2 className="text-xl font-bold text-white mb-2">
-            Creator Battle
-          </h2>
+          <h2 className="text-xl font-bold text-white mb-2">Creator Battle</h2>
           <p className="text-red-400 text-sm">
             {error || "Failed to load creator data"}
           </p>
@@ -89,15 +93,9 @@ export function CreatorBattle() {
 
   return (
     <div className="px-4">
-      {/* Creator Cards with VS - Mobile Stack */}
       <div className="space-y-4 mb-6">
-        {creators[0] && (
-          <CreatorCard 
-            creator={creators[0]} 
-          />
-        )}
-        
-        {/* VS Separator */}
+        {creators[0] && <CreatorCard creator={creators[0]} />}
+
         <div className="flex items-center justify-center py-2">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
@@ -111,12 +109,8 @@ export function CreatorBattle() {
             </div>
           </div>
         </div>
-        
-        {creators[1] && (
-          <CreatorCard 
-            creator={creators[1]} 
-          />
-        )}
+
+        {creators[1] && <CreatorCard creator={creators[1]} />}
       </div>
     </div>
   );

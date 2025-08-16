@@ -4,16 +4,18 @@ import { CreatorBattle } from "./components/CreatorBattle";
 import { ContestTimer } from "./components/ContestTimer";
 import { FlipHeader } from "./components/FlipHeader";
 import { CoinComparison } from "./components/CoinComparison";
+import { UserAddressProvider, useUserAddress } from "~/contexts/UserAddressContext";
 
-// Creator addresses - must match those in CreatorBattle
-const ARITRA_ADDRESS = "0x8378d9a2c0960a7c3163fe1d7ab74f9b3295a011";
+// Creator addresses
 const KISMET_ADDRESS = "0x91169bfa46481ba2b0db01bfdfd3d5be3d3dceb8";
 
 type PreContestScreenProps = {
   onNavigateToOngoing?: () => void;
 };
 
-export function PreContestScreen({ onNavigateToOngoing }: PreContestScreenProps) {
+function PreContestScreenContent({ onNavigateToOngoing }: PreContestScreenProps) {
+  const { zoraProfileAddress } = useUserAddress();
+  
   // Mock contest start time - 2 hours from now
   const contestStartTime = new Date(Date.now() + 2 * 60 * 60 * 1000);
 
@@ -41,11 +43,13 @@ export function PreContestScreen({ onNavigateToOngoing }: PreContestScreenProps)
               </p>
             </div>
             <div className="ml-3 flex space-x-2">
-              <CoinComparison
-                coinAddress1={ARITRA_ADDRESS}
-                coinAddress2={KISMET_ADDRESS}
-                startTimestamp={startTimestamp}
-              />
+              {zoraProfileAddress && (
+                <CoinComparison
+                  coinAddress1={zoraProfileAddress}
+                  coinAddress2={KISMET_ADDRESS}
+                  startTimestamp={startTimestamp}
+                />
+              )}
               {/* Test Navigation Button */}
               {onNavigateToOngoing && (
                 <button
@@ -67,5 +71,13 @@ export function PreContestScreen({ onNavigateToOngoing }: PreContestScreenProps)
         <ContestTimer contestStartTime={contestStartTime} />
       </div>
     </div>
+  );
+}
+
+export function PreContestScreen({ onNavigateToOngoing }: PreContestScreenProps) {
+  return (
+    <UserAddressProvider>
+      <PreContestScreenContent onNavigateToOngoing={onNavigateToOngoing} />
+    </UserAddressProvider>
   );
 }

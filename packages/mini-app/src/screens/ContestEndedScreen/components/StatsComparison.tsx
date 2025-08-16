@@ -8,11 +8,10 @@ import {
 } from "~/lib/getCreatorCoins";
 import { ProfileData } from "~/types/profile";
 import { TrendingUp, DollarSign, Users, Crown } from "lucide-react";
+import { useUserAddress } from "~/contexts/UserAddressContext";
 
 type StatsComparisonProps = {
-  creatorAddress1: string;
   creatorAddress2: string;
-  winnerAddress: string;
 };
 
 // Get real stats data from coins API response
@@ -65,10 +64,9 @@ const getStatsFromCoins = (coinsData: ProfileCoinsData | null) => {
 };
 
 export function StatsComparison({
-  creatorAddress1,
   creatorAddress2,
-  winnerAddress,
 }: StatsComparisonProps) {
+  const { userAddress, loading: _addressLoading, error: addressError } = useUserAddress();
   const [creators, setCreators] = useState<
     [ProfileData | null, ProfileData | null]
   >([null, null]);
@@ -83,14 +81,20 @@ export function StatsComparison({
 
   useEffect(() => {
     async function loadCreators() {
+      if (!userAddress) {
+        setError(addressError || "Please authenticate to view stats comparison");
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
 
         const [profile1, profile2, coins1, coins2] = await Promise.all([
-          getZoraProfile(creatorAddress1),
+          getZoraProfile(userAddress),
           getZoraProfile(creatorAddress2),
-          getCreatorCoinsByAddress(creatorAddress1, 10),
+          getCreatorCoinsByAddress(userAddress, 10),
           getCreatorCoinsByAddress(creatorAddress2, 10),
         ]);
 
@@ -105,7 +109,7 @@ export function StatsComparison({
     }
 
     loadCreators();
-  }, [creatorAddress1, creatorAddress2]);
+  }, [userAddress, creatorAddress2, addressError]);
 
   if (loading) {
     return (
@@ -306,12 +310,12 @@ export function StatsComparison({
         <CreatorStatsCard
           creator={creators[0]}
           stats={stats1}
-          isWinner={creatorAddress1 === winnerAddress}
+          isWinner={stats1.finalScore > stats2.finalScore}
         />
         <CreatorStatsCard
           creator={creators[1]}
           stats={stats2}
-          isWinner={creatorAddress2 === winnerAddress}
+          isWinner={stats2.finalScore > stats1.finalScore}
         />
       </div>
     </div>

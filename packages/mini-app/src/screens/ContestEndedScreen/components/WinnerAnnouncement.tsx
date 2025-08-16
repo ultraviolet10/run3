@@ -4,23 +4,27 @@ import { useState, useEffect } from "react";
 import { getZoraProfile } from "~/lib/getZoraProfile";
 import { ProfileData } from "~/types/profile";
 import { Trophy, Crown } from "lucide-react";
+import { useUserAddress } from "~/contexts/UserAddressContext";
 
-type WinnerAnnouncementProps = {
-  winnerAddress: string;
-};
-
-export function WinnerAnnouncement({ winnerAddress }: WinnerAnnouncementProps) {
+export function WinnerAnnouncement() {
+  const { userAddress, loading: _addressLoading, error: addressError } = useUserAddress();
   const [winner, setWinner] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadWinner() {
+      if (!userAddress) {
+        setError(addressError || "Please authenticate to view winner data");
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
         
-        const profile = await getZoraProfile(winnerAddress);
+        const profile = await getZoraProfile(userAddress);
         setWinner(profile);
       } catch (err) {
         console.error("Error loading winner:", err);
@@ -31,7 +35,7 @@ export function WinnerAnnouncement({ winnerAddress }: WinnerAnnouncementProps) {
     }
 
     loadWinner();
-  }, [winnerAddress]);
+  }, [userAddress, addressError]);
 
   if (loading) {
     return (
