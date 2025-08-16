@@ -9,8 +9,13 @@ import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {ICreatorCoin} from "./interfaces/ICreatorCoin.sol";
 import {MarketCapOracle} from "./oracle/MarketCapOracle.sol";
 
+// deposit
+// resolve
+// claim
+
 contract Flip is AccessControl, Pausable, ReentrancyGuard {
     using SafeERC20 for IERC20;
+
     event BattleCreated(bytes32 indexed battleId, address creator1, address creator2);
     event BattleCompleted(bytes32 indexed battleId, address winner);
     event PrizesDistributed(bytes32 indexed battleId, uint256 winnerAmount, uint256 loserAmount);
@@ -22,14 +27,15 @@ contract Flip is AccessControl, Pausable, ReentrancyGuard {
         SCORING_PERIOD, // Calculate winner, no trading
         COMPLETED, // Prizes distributed
         CANCELLED // Emergency state
+
     }
 
-    // this is kinda weird tbh 
+    // this is kinda weird tbh
     // how do we actually get this data?
     struct TopHolder {
         address holder;
-        uint256 balance;    // Balance during battle period
-        uint256 timestamp;  // When balance was recorded
+        uint256 balance; // Balance during battle period
+        uint256 timestamp; // When balance was recorded
     }
 
     struct Battle {
@@ -62,11 +68,10 @@ contract Flip is AccessControl, Pausable, ReentrancyGuard {
     uint256 public constant DISTRIBUTION_TIMEOUT = 24 hours;
     uint256 public constant TOP_HOLDERS_COUNT = 5;
 
-
     /**
-    * @dev oracle is veeeeeeerrrrrry wip
-    * @dev study access, is it needed here? 
-    */
+     * @dev oracle is veeeeeeerrrrrry wip
+     * @dev study access, is it needed here?
+     */
     constructor(MarketCapOracle _oracle) {
         oracle = _oracle;
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -95,7 +100,7 @@ contract Flip is AccessControl, Pausable, ReentrancyGuard {
         // Validate creator1 (challenger) has sufficient tokens and allowance
         require(token1.balanceOf(msg.sender) >= stakeAmount, "Creator1 insufficient balance");
         require(token1.allowance(msg.sender, address(this)) >= stakeAmount, "Creator1 insufficient allowance");
-        
+
         // Pre-validate creator2 (challengee) has sufficient tokens
         // Note: allowance will be checked in acceptChallenge when creator2 approves
         require(token2.balanceOf(challenger) >= stakeAmount, "Creator2 insufficient balance");
@@ -130,23 +135,29 @@ contract Flip is AccessControl, Pausable, ReentrancyGuard {
     }
 
     function acceptChallenge(bytes32 battleId) external nonReentrant whenNotPaused {
-        // this assumes we store the battleId in a server somewhere 
+        // this assumes we store the battleId in a server somewhere
         Battle storage battle = battles[battleId];
 
         /**
-        * - check that the battle expects a challenger
-        * - expected challenger is the challenger
-        */
-        require(battle.state == BattleState.CHALLENGE_PERIOD, "Invalid state"); 
+         * - check that the battle expects a challenger
+         * - expected challenger is the challenger
+         */
+        require(battle.state == BattleState.CHALLENGE_PERIOD, "Invalid state");
         require(msg.sender == battle.creator2, "Not the challenged creator");
 
         // Validate both creators have sufficient balance and allowance
         require(battle.token1.balanceOf(battle.creator1) >= battle.stakeAmount, "Creator1 insufficient balance");
         require(battle.token2.balanceOf(battle.creator2) >= battle.stakeAmount, "Creator2 insufficient balance");
-        
-        // CRITICAL: Check allowances for both creators  
-        require(battle.token1.allowance(battle.creator1, address(this)) >= battle.stakeAmount, "Creator1 insufficient allowance");
-        require(battle.token2.allowance(battle.creator2, address(this)) >= battle.stakeAmount, "Creator2 insufficient allowance");
+
+        // CRITICAL: Check allowances for both creators
+        require(
+            battle.token1.allowance(battle.creator1, address(this)) >= battle.stakeAmount,
+            "Creator1 insufficient allowance"
+        );
+        require(
+            battle.token2.allowance(battle.creator2, address(this)) >= battle.stakeAmount,
+            "Creator2 insufficient allowance"
+        );
 
         // ESCROW: Safe transfer both stakes to contract
         battle.token1.transferFrom(battle.creator1, address(this), battle.stakeAmount);
@@ -165,9 +176,9 @@ contract Flip is AccessControl, Pausable, ReentrancyGuard {
         creatorActiveStakes[battle.creator2] += battle.stakeAmount;
     }
 
-    /** 
-    * should this be automated by chainlink fns?
-    */ 
+    /**
+     * should this be automated by chainlink fns?
+     */
     function determineWinner(bytes32 battleId) external nonReentrant returns (address winner) {
         Battle storage battle = battles[battleId];
 
@@ -199,8 +210,10 @@ contract Flip is AccessControl, Pausable, ReentrancyGuard {
     /// @param battleId The battle to distribute prizes for
     /// @param topHolders Array of top 5 holders of the winning token (off-chain oracle computed)
     /// write this fn in the sdk
-    function distributePrizes(bytes32 battleId, TopHolder[TOP_HOLDERS_COUNT] calldata topHolders) 
-        external nonReentrant {
+    function distributePrizes(bytes32 battleId, TopHolder[TOP_HOLDERS_COUNT] calldata topHolders)
+        external
+        nonReentrant
+    {
         Battle storage battle = battles[battleId];
 
         // Validate state
@@ -211,14 +224,14 @@ contract Flip is AccessControl, Pausable, ReentrancyGuard {
         address winner = battle.winner;
         ICreatorCoin winnerToken = (winner == battle.creator1) ? battle.token1 : battle.token2;
         ICreatorCoin loserToken = (winner == battle.creator1) ? battle.token2 : battle.token1;
-        
+
         // Verify top holders data for the WINNING token
         _verifyTopHolders(winnerToken, topHolders, battle.startTime, battle.endTime);
 
         // Calculate prize amounts per token type
         uint256 winnerTokenAmount = battle.stakeAmount; // Winner gets their own token back
-        uint256 loserTokenAmount = battle.stakeAmount;  // Winner gets loser's token
-        
+        uint256 loserTokenAmount = battle.stakeAmount; // Winner gets loser's token
+
         // Split loser's tokens: 80% to winner, 20% to top holders
         uint256 loserTokenToWinner = (loserTokenAmount * WINNER_PERCENTAGE) / 100;
         uint256 loserTokenToHolders = (loserTokenAmount * HOLDERS_PERCENTAGE) / 100;
@@ -226,15 +239,15 @@ contract Flip is AccessControl, Pausable, ReentrancyGuard {
 
         // Transfer winner's original tokens back to winner (100%)
         winnerToken.transfer(winner, winnerTokenAmount);
-        
+
         // Transfer majority of loser's tokens to winner (80%)
         loserToken.transfer(winner, loserTokenToWinner);
 
         // Transfer remaining loser's tokens to top holders (20% total, 4% each)
         address[] memory holderAddresses = new address[](TOP_HOLDERS_COUNT);
         uint256[] memory rewards = new uint256[](TOP_HOLDERS_COUNT);
-        
-        for (uint i = 0; i < TOP_HOLDERS_COUNT; i++) {
+
+        for (uint256 i = 0; i < TOP_HOLDERS_COUNT; i++) {
             if (topHolders[i].holder != address(0)) {
                 loserToken.transfer(topHolders[i].holder, holderReward);
                 holderAddresses[i] = topHolders[i].holder;
@@ -247,7 +260,7 @@ contract Flip is AccessControl, Pausable, ReentrancyGuard {
         battle.holdersRewarded = true;
         battle.state = BattleState.COMPLETED;
 
-        // Update active stakes  
+        // Update active stakes
         creatorActiveStakes[battle.creator1] -= battle.stakeAmount;
         creatorActiveStakes[battle.creator2] -= battle.stakeAmount;
 
@@ -295,40 +308,27 @@ contract Flip is AccessControl, Pausable, ReentrancyGuard {
         uint256 startTime,
         uint256 endTime
     ) internal view {
-        for (uint i = 0; i < TOP_HOLDERS_COUNT; i++) {
+        for (uint256 i = 0; i < TOP_HOLDERS_COUNT; i++) {
             TopHolder calldata holder = topHolders[i];
-            
+
             if (holder.holder == address(0)) continue;
-            
+
             // Verify timestamp is within battle period
-            require(
-                holder.timestamp >= startTime && holder.timestamp <= endTime,
-                "Invalid holder timestamp"
-            );
-            
+            require(holder.timestamp >= startTime && holder.timestamp <= endTime, "Invalid holder timestamp");
+
             // Verify current balance is reasonable (holder still has tokens)
             // This is a simple check - sophisticated attacks would need more validation
             uint256 currentBalance = token.balanceOf(holder.holder);
-            require(
-                currentBalance > 0 && holder.balance > 0,
-                "Invalid holder balance"
-            );
+            require(currentBalance > 0 && holder.balance > 0, "Invalid holder balance");
 
             // Verify holders are sorted by balance (descending)
-            if (i > 0 && topHolders[i-1].holder != address(0)) {
-                require(
-                    holder.balance <= topHolders[i-1].balance,
-                    "Holders not sorted by balance"
-                );
+            if (i > 0 && topHolders[i - 1].holder != address(0)) {
+                require(holder.balance <= topHolders[i - 1].balance, "Holders not sorted by balance");
             }
         }
     }
 
-    function generateBattleId(
-      address creator1,
-      address creator2,
-      uint256 timestamp
-  ) internal pure returns (bytes32) {
-      return keccak256(abi.encodePacked(creator1, creator2, timestamp));
-  }
+    function generateBattleId(address creator1, address creator2, uint256 timestamp) internal pure returns (bytes32) {
+        return keccak256(abi.encodePacked(creator1, creator2, timestamp));
+    }
 }
