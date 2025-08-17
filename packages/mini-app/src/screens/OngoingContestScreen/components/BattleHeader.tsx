@@ -20,9 +20,9 @@ export function BattleHeader({ onNavigateToEnded }: BattleHeaderProps) {
 
   return (
     <div className="flex items-center justify-between px-4 py-4 bg-gray-50">
-      {/* Left - Flip Logo */}
+      {/* Left - Blitz Logo */}
       <div className="flex items-center">
-        <h1 className="text-2xl font-bold text-gray-800 italic">flip</h1>
+        <h1 className="text-2xl font-bold text-gray-800 italic">blitz</h1>
       </div>
 
       {/* Right - Connect Wallet Button and Info Icon */}

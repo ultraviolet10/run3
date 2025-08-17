@@ -20,7 +20,7 @@ export function FlipHeader() {
   return (
     <div className="bg-gray-50 px-4 py-3 flex items-center justify-between">
       {/* App Name - Italicized */}
-      <h1 className="text-xl font-bold text-gray-700 font-syne italic">flip</h1>
+      <h1 className="text-xl font-bold text-gray-700 font-syne italic">blitz</h1>
 
       {/* Right side with Connect Wallet and Info */}
       <div className="flex items-center space-x-3">

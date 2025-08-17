@@ -88,7 +88,7 @@ export function MandatoryFarcasterConnect({ children }: MandatoryFarcasterConnec
 
           {/* Description */}
           <p className="text-gray-600 mb-8 leading-relaxed">
-            To use Flip, you need to connect your Farcaster wallet. This enables you to participate in creator battles and manage your transactions securely.
+            To use Blitz, you need to connect your Farcaster wallet. This enables you to participate in creator battles and manage your transactions securely.
           </p>
 
           {/* Connect Button */}

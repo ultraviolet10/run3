@@ -159,7 +159,7 @@ export function useFarcasterTransaction() {
       }
 
       // Create a waitlist message with timestamp for uniqueness
-      const waitlistMessage = `Join Flip Waitlist\nAddress: ${address}\nTimestamp: ${Date.now()}`;
+      const waitlistMessage = `Join Blitz Waitlist\nAddress: ${address}\nTimestamp: ${Date.now()}`;
 
       console.log("About to sign message:", waitlistMessage);
 

@@ -15,7 +15,7 @@ export function ShareDrawer({
   creatorName = "Creator",
 }: ShareDrawerProps) {
   const [copied, setCopied] = useState(false);
-  const shareText = `Just joined the waitlist for the ${creatorName} creator battle on Flip! 🚀 Ready to support and win together. #FlipCreatorBattle #Crypto`;
+  const shareText = `Just joined the waitlist for the ${creatorName} creator battle on Blitz! 🚀 Ready to support and win together. #BlitzCreatorBattle #Crypto`;
   const shareUrl = window.location.href;
 
   const handleTwitterShare = () => {
