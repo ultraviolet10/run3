@@ -23,7 +23,7 @@ function PreContestScreenContent({ onNavigateToOngoing }: PreContestScreenProps)
   const startTimestamp = Math.floor(Date.now() / 1000) - 24 * 60 * 60;
 
   return (
-    <div className="h-screen bg-black flex flex-col overflow-hidden">
+    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
       {/* Header */}
       <div className="flex-shrink-0">
         <FlipHeader />
@@ -31,39 +31,19 @@ function PreContestScreenContent({ onNavigateToOngoing }: PreContestScreenProps)
 
       {/* Main Content - Scrollable */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-4 py-4">
-          {/* Contest Title with Performance Button */}
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex-1">
-              <h2 className="text-lg font-bold text-white mb-1">
-                Creator Battle
-              </h2>
-              <p className="text-gray-400 text-xs">
-                Two creators, one winner. Who will you support?
-              </p>
-            </div>
-            <div className="ml-3 flex space-x-2">
-              {zoraProfileAddress && (
-                <CoinComparison
-                  coinAddress1={zoraProfileAddress}
-                  coinAddress2={KISMET_ADDRESS}
-                  startTimestamp={startTimestamp}
-                />
-              )}
-              {/* Test Navigation Button */}
-              {onNavigateToOngoing && (
-                <button
-                  onClick={onNavigateToOngoing}
-                  className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold rounded-lg transition-colors"
-                >
-                  Test Live
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-
         <CreatorBattle />
+        
+        {/* Testing Navigation Button */}
+        {onNavigateToOngoing && (
+          <div className="px-4 py-6">
+            <button
+              onClick={onNavigateToOngoing}
+              className="w-full bg-lime-400 text-black font-semibold py-3 px-6 rounded-full border-2 border-black hover:bg-lime-300 transition-colors"
+            >
+              🧪 Test Navigation → Ongoing Contest
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Fixed Timer Footer */}

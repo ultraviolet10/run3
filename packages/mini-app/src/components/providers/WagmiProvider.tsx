@@ -4,11 +4,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { farcasterFrame } from "@farcaster/miniapp-wagmi-connector";
 import { coinbaseWallet, metaMask } from 'wagmi/connectors';
 import { APP_NAME, APP_ICON_URL, APP_URL } from "~/lib/constants";
-import { useEffect, useState } from "react";
-import { useConnect, useAccount } from "wagmi";
+// import { useEffect, useState } from "react";
+// import { useConnect, useAccount } from "wagmi";
 import React from "react";
+import { MandatoryFarcasterConnect } from "~/components/ui/MandatoryFarcasterConnect";
 
 // Custom hook for Coinbase Wallet detection and auto-connection
+// COMMENTED OUT - Using mandatory Farcaster connection instead
+/*
 function useCoinbaseWalletAutoConnect() {
   const [isCoinbaseWallet, setIsCoinbaseWallet] = useState(false);
   const { connect, connectors } = useConnect();
@@ -40,6 +43,7 @@ function useCoinbaseWalletAutoConnect() {
 
   return isCoinbaseWallet;
 }
+*/
 
 export const config = createConfig({
   chains: [base, optimism, mainnet, degen, unichain, celo],
@@ -70,18 +74,21 @@ export const config = createConfig({
 const queryClient = new QueryClient();
 
 // Wrapper component that provides Coinbase Wallet auto-connection
+// COMMENTED OUT - Using mandatory Farcaster connection instead
+/*
 function CoinbaseWalletAutoConnect({ children }: { children: React.ReactNode }) {
   useCoinbaseWalletAutoConnect();
   return <>{children}</>;
 }
+*/
 
 export default function Provider({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <CoinbaseWalletAutoConnect>
+        {/* <MandatoryFarcasterConnect> */}
           {children}
-        </CoinbaseWalletAutoConnect>
+        {/* </MandatoryFarcasterConnect> */}
       </QueryClientProvider>
     </WagmiProvider>
   );

@@ -27,6 +27,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-syne: 'Syne', sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -39,7 +40,7 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Inter', Helvetica, Arial, sans-serif;
+  font-family: var(--font-syne), Helvetica, Arial, sans-serif;
 }
 
 * {
@@ -54,6 +55,42 @@ body {
 @layer base {
   :root {
     --radius: 0.5rem;
+  }
+  
+  /* Syne font utility classes */
+  .syne-400 {
+    font-family: var(--font-syne);
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .syne-500 {
+    font-family: var(--font-syne);
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  .syne-600 {
+    font-family: var(--font-syne);
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+  }
+  
+  .syne-700 {
+    font-family: var(--font-syne);
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  .syne-800 {
+    font-family: var(--font-syne);
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
   }
 }
 

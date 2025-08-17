@@ -1,11 +1,30 @@
 "use client";
 
 import { ProfileData } from "~/types/profile";
-import { TrendingUp, TrendingDown } from "lucide-react";
 
 type CreatorCardProps = {
   creator: ProfileData;
 };
+
+// Down Triangle Icon Component
+const DownTriangleIcon = () => (
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 12 12"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M6 9L2 3H10L6 9Z" fill="#ec4899" />
+  </svg>
+);
+
+// Mock top holders data - in a real app this would come from the API
+const mockTopHolders = [
+  { id: 1, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=1" },
+  { id: 2, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=2" },
+  { id: 3, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=3" },
+];
 
 export function CreatorCard({ creator }: CreatorCardProps) {
   const handleCardClick = () => {
@@ -18,72 +37,87 @@ export function CreatorCard({ creator }: CreatorCardProps) {
 
   if (!creator.profile) return null;
 
+  // Use real data from Zora profile or fallback values
+  // Note: Using mock data for followers/following as these aren't available in current Zora API
+  const marketCap = creator.profile.creatorCoin?.marketCap || "0";
+
+  // Format market cap for display
+  const formatMarketCap = (value: string) => {
+    const num = parseFloat(value);
+    if (num >= 1000000) {
+      return `$${(num / 1000000).toFixed(0)} M`;
+    } else if (num >= 1000) {
+      return `$${(num / 1000).toFixed(0)} K`;
+    }
+    return `$${num.toFixed(0)}`;
+  };
+
   return (
     <div
-      className="bg-gray-900 border border-gray-800 rounded-xl p-3 cursor-pointer hover:border-green-500/30 hover:shadow-lg hover:shadow-green-500/10 transition-all"
+      className="bg-white rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all relative border-2 border-black"
       onClick={handleCardClick}
+      style={{
+        clipPath: "polygon(20px 0%, 100% 0%, 100% 100%, 0% 100%, 0% 20px)",
+      }}
     >
-      {/* Header with Avatar and Follow Button */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center space-x-2">
-          <img
-            src={creator.profile.avatar?.medium || creator.profile.avatar?.small}
-            alt={creator.profile.displayName}
-            className="w-10 h-10 rounded-full border-2 border-gray-700"
-          />
-          <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-white text-base truncate">
-              {creator.profile.displayName}
-            </h3>
-            <p className="text-gray-400 text-xs truncate">
-              @{creator.profile.handle}
-            </p>
-          </div>
-        </div>
-        <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-          <span className="text-black text-xs font-bold">+</span>
+      {/* Profile Section */}
+      <div className="flex items-start space-x-3 mb-4">
+        <img
+          src={
+            creator.profile.avatar?.medium ||
+            creator.profile.avatar?.small ||
+            "https://api.dicebear.com/7.x/avataaars/svg?seed=default"
+          }
+          alt={creator.profile.displayName}
+          className="w-16 h-16 rounded-xl bg-black"
+        />
+        <div className="flex-1">
+          <h3 className="font-bold text-black text-lg font-syne">
+            {creator.profile.displayName || "Creator"}
+          </h3>
+          <p className="text-gray-600 text-sm font-syne">
+            @{creator.profile.handle || "creator"}
+          </p>
         </div>
       </div>
 
-      {/* Bio - Condensed */}
-      {creator.profile.bio && (
-        <div className="mb-2 px-2 py-1 bg-gray-800/50 rounded border-l-2 border-green-500">
-          <p className="text-gray-300 text-xs line-clamp-1">{creator.profile.bio}</p>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        {/* Market Cap */}
+        <div className="bg-gray-100 rounded-lg p-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs text-gray-500 font-syne">Market Cap</span>
+            <DownTriangleIcon />
+          </div>
+          <div className="text-lg font-bold text-pink-500 font-syne">
+            {formatMarketCap(marketCap)}
+          </div>
         </div>
-      )}
 
-      {/* Market Cap Card */}
-      <div className="bg-gray-800/70 rounded-lg p-2 mb-3">
-        <div className="flex justify-between items-center mb-2">
-          <p className="text-gray-400 text-sm font-medium">Market Cap</p>
-          {creator.profile.creatorCoin?.marketCapDelta24h && (
-            <div
-              className={`flex items-center text-xs px-2 py-1 rounded-full ${
-                parseFloat(creator.profile.creatorCoin.marketCapDelta24h) >= 0
-                  ? "bg-green-500/20 text-green-400"
-                  : "bg-red-500/20 text-red-400"
-              }`}
-            >
-              {parseFloat(creator.profile.creatorCoin.marketCapDelta24h) >=
-              0 ? (
-                <TrendingUp className="w-3 h-3 mr-1" />
-              ) : (
-                <TrendingDown className="w-3 h-3 mr-1" />
-              )}
-              <span>
-                $
-                {Math.abs(
-                  parseFloat(creator.profile.creatorCoin.marketCapDelta24h)
-                ).toFixed(2)}
-              </span>
-            </div>
-          )}
-        </div>
-        <div className="flex items-baseline">
-          <span className="font-bold text-2xl text-white">
-            ${creator.profile.creatorCoin?.marketCap || "0"}
+        {/* Top Holders */}
+        <div className="bg-gray-100 rounded-lg p-3">
+          <span className="text-xs text-gray-500 font-syne block mb-2">
+            Top Holders
           </span>
+          <div className="flex -space-x-2">
+            {mockTopHolders.map((holder, index) => (
+              <img
+                key={holder.id}
+                src={holder.avatar}
+                alt={`Holder ${holder.id}`}
+                className="w-6 h-6 rounded-full border-2 border-white"
+                style={{ zIndex: mockTopHolders.length - index }}
+              />
+            ))}
+          </div>
         </div>
+      </div>
+
+      {/* Pagination Dots */}
+      <div className="flex justify-center space-x-2">
+        <div className="w-2 h-2 rounded-full bg-lime-400"></div>
+        <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+        <div className="w-2 h-2 rounded-full bg-gray-300"></div>
       </div>
     </div>
   );

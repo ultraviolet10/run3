@@ -4,8 +4,14 @@ import { useState, useEffect } from "react";
 import { CreatorCard } from "./CreatorCard";
 import { getZoraProfile } from "~/lib/getZoraProfile";
 import { ProfileData } from "~/types/profile";
-import { Swords } from "lucide-react";
 import { useUserAddress } from "~/contexts/UserAddressContext";
+
+// Lightning Icon Component
+const LightningIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="currentColor"/>
+  </svg>
+);
 
 const KISMET_ADDRESS = "0x58f19e55058057b04feae2eea88f90b84b7714eb";
 
@@ -92,20 +98,14 @@ export function CreatorBattle() {
   }
 
   return (
-    <div className="px-4">
-      <div className="space-y-4 mb-6">
+    <div className="px-4 py-6">
+      <div className="space-y-6">
         {creators[0] && <CreatorCard creator={creators[0]} />}
 
         <div className="flex items-center justify-center py-2">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-              <Swords className="w-4 h-4 text-black" />
-            </div>
-            <span className="text-lg font-bold text-white tracking-wider">
-              VS
-            </span>
-            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-              <Swords className="w-4 h-4 text-black" />
+          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
+            <div className="text-black">
+              <LightningIcon />
             </div>
           </div>
         </div>

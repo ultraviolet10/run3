@@ -36,6 +36,9 @@ export default {
   			background: 'var(--background)',
   			foreground: 'var(--foreground)'
   		},
+  		fontFamily: {
+  			syne: ['var(--font-syne)', 'sans-serif'],
+  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',

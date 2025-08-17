@@ -37,7 +37,7 @@ export function UserAddressProvider({ children }: UserAddressProviderProps) {
 
   // Get user's smart wallet address from Privy
   const privyAddress =
-    authenticated && user?.linkedAccounts[0]?.smartWallets[0]?.address;
+    authenticated && user?.linkedAccounts[0] && (user.linkedAccounts[0] as any).smartWallets?.[0]?.address;
 
   const fetchZoraProfileAddress = async (address: string) => {
     try {
