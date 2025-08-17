@@ -4,8 +4,7 @@ import { useCallback, useState, useEffect } from "react";
 import {
   useAccount,
   useSendTransaction,
-  useSignTypedData,
-  useChainId,
+  useSignMessage,
   useConnect,
   useDisconnect,
 } from "wagmi";
@@ -19,9 +18,8 @@ export function useFarcasterTransaction() {
 
   const { context } = useMiniApp();
   const { address, isConnected, connector } = useAccount();
-  const chainId = useChainId();
   const { sendTransaction } = useSendTransaction();
-  const { signTypedData } = useSignTypedData();
+  const { signMessage } = useSignMessage();
   const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
 
@@ -132,25 +130,10 @@ export function useFarcasterTransaction() {
       }
 
       // Sign a typed data message to accept the challenge
-      signTypedData({
-        domain: {
-          name: "Flip Creator Battle",
-          version: "1",
-          chainId,
-        },
-        types: {
-          Challenge: [
-            { name: "creator", type: "address" },
-            { name: "battleId", type: "uint256" },
-            { name: "timestamp", type: "uint256" },
-          ],
-        },
+      signMessage({
         message: {
-          creator: address,
-          battleId: BigInt(1), // Example battle ID
-          timestamp: BigInt(Math.floor(Date.now() / 1000)),
+          raw: address,
         },
-        primaryType: "Challenge",
       });
 
       setIsLoading(false);
@@ -159,11 +142,58 @@ export function useFarcasterTransaction() {
       setError(err instanceof Error ? err.message : "Signing failed");
       setIsLoading(false);
     }
-  }, [ensureFarcasterConnection, address, chainId, signTypedData]);
+  }, [ensureFarcasterConnection, address, signMessage]);
+
+  const signWaitlistMessage = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Ensure we're connected via Farcaster wallet
+      await ensureFarcasterConnection();
+
+      if (!address) {
+        setError("Farcaster wallet not connected");
+        setIsLoading(false);
+        return null;
+      }
+
+      // Create a waitlist message with timestamp for uniqueness
+      const waitlistMessage = `Join Flip Waitlist\nAddress: ${address}\nTimestamp: ${Date.now()}`;
+
+      console.log("About to sign message:", waitlistMessage);
+
+      // Use the signMessage function with proper async/await pattern
+      return new Promise<string>((resolve, reject) => {
+        signMessage(
+          { message: waitlistMessage },
+          {
+            onSuccess: (signature) => {
+              console.log("Signature received:", signature);
+              setIsLoading(false);
+              resolve(signature);
+            },
+            onError: (error) => {
+              console.error("Signing failed:", error);
+              setError(error.message);
+              setIsLoading(false);
+              reject(error);
+            },
+          }
+        );
+      });
+    } catch (err) {
+      console.error("Error in signWaitlistMessage:", err);
+      setError(err instanceof Error ? err.message : "Signing failed");
+      setIsLoading(false);
+      return null;
+    }
+  }, [ensureFarcasterConnection, address, signMessage]);
 
   return {
     acceptChallenge,
     signChallengeMessage,
+    signWaitlistMessage,
     connectFarcasterWallet: ensureFarcasterConnection,
     isLoading,
     error,

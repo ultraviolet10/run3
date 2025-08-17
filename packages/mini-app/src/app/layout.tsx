@@ -1,17 +1,24 @@
-import type { Metadata } from 'next';
-import { Syne } from 'next/font/google';
+import type { Metadata } from "next";
+import { Dela_Gothic_One, Schibsted_Grotesk } from "next/font/google";
 
-import { getSession } from '~/auth';
-import '~/app/globals.css';
-import { Providers } from '~/app/providers';
-import { APP_NAME, APP_DESCRIPTION } from '~/lib/constants';
+import { getSession } from "~/auth";
+import "~/app/globals.css";
+import { Providers } from "~/app/providers";
+import { APP_NAME, APP_DESCRIPTION } from "~/lib/constants";
 
-// Initialize the Syne font
-const syne = Syne({
-  subsets: ['latin'],
-  display: 'swap',
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-syne',
+// Initialize the Dela Gothic One font
+const delagothicone = Dela_Gothic_One({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400"],
+  variable: "--font-delagothicone",
+});
+
+const grotesk = Schibsted_Grotesk({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-grotesk",
 });
 
 export const metadata: Metadata = {
@@ -27,11 +34,9 @@ export default async function RootLayout({
   const session = await getSession();
 
   return (
-    <html lang="en" className={`${syne.variable}`}>
+    <html lang="en" className={`${delagothicone.variable} ${grotesk.variable}`}>
       <body>
-        <Providers session={session}>
-          {children}
-        </Providers>
+        <Providers session={session}>{children}</Providers>
       </body>
     </html>
   );
