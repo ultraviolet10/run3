@@ -75,10 +75,10 @@ export const APP_SPLASH_BACKGROUND_COLOR: string = "#5C734E";
  */
 export const APP_ACCOUNT_ASSOCIATION: AccountAssociation | undefined = {
   header:
-    "eyJmaWQiOjEyMjc2MDAsInR5cGUiOiJhdXRoIiwia2V5IjoiMHg1QkRhN2RlNzY2MjIwNTIzY0M1YkFhYTZEZTYzQTRjMTQ0OEYwMGJGIn0",
-  payload: "eyJkb21haW4iOiJ3d3cuZmxpcGVtLnh5eiJ9",
+    "eyJmaWQiOjEyMjc2MDAsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHhGMTBjZWYxMTE2ODc2RjY1MTJmZkMxMjMwMTFCMDk2NjE4OGYzMjFBIn0",
+  payload: "eyJkb21haW4iOiJmbGlwZW0ueHl6In0",
   signature:
-    "mRYjhjMkBjaZp/pCSu9PEtedPUejpmKS9rLDqVF031NGcRHmrMVGRqZ0VHsrtKib5xvD9fl08lCiFZYHlPCeMBw=",
+    "MHhiZWVkZDY2NmZkMTdiOGY3MTYxYTUxZTdmZDA2Nzg5ZmNiZDk1YTkxNTZiODA1OTEwMjg3ZjVjZjgzZDdlNGUzMDliMWI4ODBmNWE0NWMzYmUzMzUyNmMwZmY5MTJhYmFiMmUyMDQ5NTNhN2Q2ZjU5ZTA2YjEzZWM3ZDg1YTlkZDFi",
 };
 
 // --- UI Configuration ---
