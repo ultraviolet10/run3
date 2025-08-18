@@ -16,7 +16,7 @@ import { type AccountAssociation } from '@farcaster/miniapp-core/src/manifest';
  * The base URL of the application.
  * Used for generating absolute URLs for assets and API endpoints.
  */
-export const APP_URL: string = process.env.NEXT_PUBLIC_URL!;
+export const APP_URL: string = process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000";
 
 /**
  * The name of the mini app as displayed to users.
@@ -40,7 +40,7 @@ export const APP_PRIMARY_CATEGORY: string = 'social';
  * Tags associated with the mini app.
  * Used for search and discovery in app stores.
  */
-export const APP_TAGS: string[] = ['neynar', 'starter-kit', 'demo'];
+export const APP_TAGS: string[] = ['education', 'zora', 'social', 'creator', 'gaming'];
 
 // --- Asset URLs ---
 /**

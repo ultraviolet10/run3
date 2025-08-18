@@ -66,7 +66,7 @@ export function AuthScreen() {
 
             // Signature Data
             signature: signature,
-            signatureMessage: `Join waitlist for Creator Battle - ${new Date().toISOString()}`,
+            signatureMessage: `Join the waitlist for Blitz! - ${new Date().toISOString()}`,
 
             // Metadata
             chainId: context.client?.platformType || "web",
@@ -173,7 +173,7 @@ export function AuthScreen() {
                 wordSpacing: "2px",
               }}
             >
-              Support by trading.
+              You support.
             </div>
             <div
               className="text-4xl font-bold uppercase leading-tight"
@@ -183,15 +183,6 @@ export function AuthScreen() {
               }}
             >
               Win together.
-            </div>
-            <div
-              className="text-4xl font-bold uppercase leading-tight"
-              style={{
-                color: "#67CE67",
-                wordSpacing: "2px",
-              }}
-            >
-              Win big.
             </div>
           </div>
         </div>
@@ -218,12 +209,12 @@ export function AuthScreen() {
             ) : isSubmitting ? (
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-5 h-5 border-2 border-[#124D04] border-t-transparent rounded-full animate-spin"></div>
-                <span>Joining Waitlist...</span>
+                <span>joining waitlist ⏳</span>
               </div>
             ) : hasJoinedWaitlist ? (
-              "✓ Already on Waitlist!"
+              "✓ battle incoming ✓"
             ) : (
-              "Join Waitlist"
+              "join waitlist"
             )}
           </button>
         </div>

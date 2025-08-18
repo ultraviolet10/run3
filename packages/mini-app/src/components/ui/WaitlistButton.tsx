@@ -32,12 +32,12 @@ export function WaitlistButton({ creatorName, className = "" }: WaitlistButtonPr
         onClick={handleJoinWaitlist}
         disabled={isLoading}
         className={`
-          px-6 py-3 bg-lime-400 hover:bg-lime-500 text-black font-bold rounded-xl
+          px-6 py-3 bg-lime-400 hover:bg-lime-500 text-black font-bold rounded-lg
           transition-colors disabled:opacity-50 disabled:cursor-not-allowed
           font-syne ${className}
         `}
       >
-        {isLoading ? "Signing..." : "Join Waitlist"}
+        {isLoading ? "signing..." : "join waitlist"}
       </button>
 
       {error && (

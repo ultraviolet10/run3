@@ -38,7 +38,7 @@ Add a new user to the waitlist.
   "location": "Location",
   "walletAddress": "0x...",
   "signature": "0x...",
-  "signatureMessage": "Join waitlist...",
+  "signatureMessage": "Join waitlist for Blitz!",
   "chainId": "base",
   "clientFid": "67890",
   "platformType": "web",
