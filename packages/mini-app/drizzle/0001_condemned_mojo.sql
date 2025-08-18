@@ -1,0 +1,1 @@
+ALTER TABLE "waitlist_entries" ADD COLUMN "card_number" integer NOT NULL;

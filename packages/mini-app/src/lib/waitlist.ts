@@ -1,6 +1,6 @@
 import { getDb } from './db/connection';
 import { waitlistEntries, type NewWaitlistEntry } from './db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, max } from 'drizzle-orm';
 
 export interface WaitlistData {
   // User Profile Data
@@ -26,7 +26,7 @@ export interface WaitlistData {
   fullContext?: any;
 }
 
-export async function addToWaitlist(data: WaitlistData): Promise<{ success: boolean; id?: string; error?: string }> {
+export async function addToWaitlist(data: WaitlistData): Promise<{ success: boolean; id?: string; cardNumber?: number; error?: string }> {
   try {
     const db = getDb();
 
@@ -44,6 +44,13 @@ export async function addToWaitlist(data: WaitlistData): Promise<{ success: bool
       };
     }
 
+    // Get the next card number by finding the maximum existing card number
+    const maxCardResult = await db
+      .select({ maxCard: max(waitlistEntries.cardNumber) })
+      .from(waitlistEntries);
+
+    const nextCardNumber = (maxCardResult[0]?.maxCard || 0) + 1;
+
     // Insert new waitlist entry
     const newEntry: NewWaitlistEntry = {
       fid: data.fid,
@@ -57,17 +64,19 @@ export async function addToWaitlist(data: WaitlistData): Promise<{ success: bool
       chainId: data.chainId,
       clientFid: data.clientFid,
       platformType: data.platformType,
+      cardNumber: nextCardNumber,
       fullContext: data.fullContext,
     };
 
     const result = await db
       .insert(waitlistEntries)
       .values(newEntry)
-      .returning({ id: waitlistEntries.id });
+      .returning({ id: waitlistEntries.id, cardNumber: waitlistEntries.cardNumber });
 
     return {
       success: true,
-      id: result[0].id
+      id: result[0].id,
+      cardNumber: result[0].cardNumber
     };
   } catch (error) {
     console.error('Error adding to waitlist:', error);

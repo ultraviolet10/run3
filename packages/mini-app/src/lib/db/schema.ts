@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, jsonb, uuid, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, jsonb, uuid, boolean, integer } from 'drizzle-orm/pg-core';
 
 export const waitlistEntries = pgTable('waitlist_entries', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -24,6 +24,9 @@ export const waitlistEntries = pgTable('waitlist_entries', {
   
   // Status
   isActive: boolean('is_active').default(true),
+  
+  // Card number for waitlist position
+  cardNumber: integer('card_number').notNull(),
   
   // Full context for debugging (stored as JSON)
   fullContext: jsonb('full_context'),

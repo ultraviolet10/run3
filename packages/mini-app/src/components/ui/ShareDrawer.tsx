@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
+import { useMiniApp } from "@neynar/react";
 
 type ShareDrawerProps = {
   isOpen: boolean;
@@ -14,7 +15,7 @@ export function ShareDrawer({
   onClose,
   creatorName = "Creator",
 }: ShareDrawerProps) {
-  const [copied, setCopied] = useState(false);
+  const { context } = useMiniApp();
   const shareText = `Just joined the waitlist for the ${creatorName} creator battle on Blitz! 🚀 Ready to support and win together. #BlitzCreatorBattle #Crypto`;
   const shareUrl = window.location.href;
 
@@ -26,20 +27,20 @@ export function ShareDrawer({
   };
 
   const handleFarcasterShare = () => {
-    const farcasterUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(
-      shareText + " " + shareUrl
-    )}`;
-    window.open(farcasterUrl, "_blank", "noopener,noreferrer");
-  };
+    // Create dynamic waitlist card image URL
+    const cardImageUrl = context?.user?.fid
+      ? `${window.location.origin}/api/waitlist-card?fid=${context.user.fid}`
+      : null;
 
-  const handleCopyUrl = async () => {
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy URL:", err);
+    // Create Farcaster cast with embedded image
+    const farcasterText = encodeURIComponent(shareText);
+    let farcasterUrl = `https://warpcast.com/~/compose?text=${farcasterText}`;
+
+    if (cardImageUrl) {
+      farcasterUrl += `&embeds[]=${encodeURIComponent(cardImageUrl)}`;
     }
+
+    window.open(farcasterUrl, "_blank", "noopener,noreferrer");
   };
 
   if (!isOpen) return null;
@@ -55,113 +56,99 @@ export function ShareDrawer({
       {/* Drawer */}
       <div
         className={`
-        relative w-full max-w-md bg-white rounded-t-2xl border-t border-gray-200 shadow-2xl
+        relative w-full max-w-sm bg-black rounded-t-2xl shadow-2xl
         transform transition-transform duration-300 ease-out
         ${isOpen ? "translate-y-0" : "translate-y-full"}
       `}
+        style={{
+          backgroundColor: "#161616",
+        }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900 font-syne">
-            Share Your Battle Join
-          </h2>
+        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+          <h2 className="text-lg font-bold text-white">Share Your Entry</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+            className="p-1 rounded-full hover:bg-gray-800 transition-colors"
           >
-            <Image
-              src="/close.svg"
-              alt="Close"
-              width={16}
-              height={16}
-              style={{
-                filter:
-                  "brightness(0) saturate(100%) invert(27%) sepia(8%) saturate(1567%) hue-rotate(314deg) brightness(91%) contrast(88%)",
-              }}
-            />
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 4L4 12M4 4L12 12"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-4">
-          {/* Preview Text */}
-          <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 mb-2 font-syne">Preview:</p>
-            <p className="text-sm text-gray-700 font-syne leading-relaxed">
-              {shareText}
-            </p>
-          </div>
+        <div className="p-4 space-y-4">
+          {/* Card Preview */}
+          {context?.user?.fid && (
+            <div className="flex flex-col items-center space-y-2">
+              <span className="text-sm text-gray-400">Your waitlist card</span>
+              <div className="relative w-full max-w-xs aspect-[1.91/1] rounded-lg overflow-hidden border border-gray-700">
+                <Image
+                  src={`${window.location.origin}/api/waitlist-card?fid=${context.user.fid}`}
+                  alt="Waitlist Card Preview"
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+            </div>
+          )}
 
           {/* Share Icons */}
-          <div className="flex justify-center space-x-6 pt-2">
-            {/* Twitter Share */}
-            <button
-              onClick={handleTwitterShare}
-              className="w-12 h-12 bg-black hover:bg-gray-800 rounded-full flex items-center justify-center transition-colors group"
-              title="Share on Twitter"
-            >
-              <Image
-                src="/x.svg"
-                alt="Twitter"
-                width={18}
-                height={18}
-                style={{ filter: "brightness(0) invert(1)" }}
-              />
-            </button>
+          <div className="flex justify-center space-x-6">
 
-            {/* Farcaster Share */}
-            <button
-              onClick={handleFarcasterShare}
-              className="w-12 h-12 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center transition-colors group"
-              title="Share on Farcaster"
-            >
-              <Image
-                src="/farcaster.svg"
-                alt="Farcaster"
-                width={19}
-                height={18}
-              />
-            </button>
-
-            {/* Copy URL */}
-            <button
-              onClick={handleCopyUrl}
-              className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 group border ${
-                copied
-                  ? "bg-green-500 hover:bg-green-600 border-green-500"
-                  : "bg-gray-200 hover:bg-gray-300 border-gray-300"
-              }`}
-              title={copied ? "Copied!" : "Copy URL"}
-            >
-              {copied ? (
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 18 18"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M15 4.5L6.75 12.75L3 9"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              ) : (
+            {/* X post */}
+            <div className="flex flex-col items-center space-y-2">
+              <button
+                onClick={handleTwitterShare}
+                className="w-12 h-12 bg-gray-800 hover:bg-gray-700 rounded-full flex items-center justify-center transition-colors"
+                title="Share on X"
+              >
                 <Image
-                  src="/copy.svg"
-                  alt="Copy"
-                  width={18}
-                  height={18}
+                  src="/x.svg"
+                  alt="X"
+                  width={16}
+                  height={16}
                   style={{
-                    filter:
-                      "brightness(0) saturate(100%) invert(27%) sepia(8%) saturate(1567%) hue-rotate(314deg) brightness(91%) contrast(88%)",
+                    filter: "brightness(0) invert(1)",
                   }}
                 />
-              )}
-            </button>
+              </button>
+              <span className="text-xs text-white">X</span>
+            </div>
+
+            {/* Farcaster */}
+            <div className="flex flex-col items-center space-y-2">
+              <button
+                onClick={handleFarcasterShare}
+                className="w-12 h-12 bg-gray-800 hover:bg-gray-700 rounded-full flex items-center justify-center transition-colors"
+                title="Share on Farcaster"
+              >
+                <Image
+                  src="/farcaster.svg"
+                  alt="Farcaster"
+                  width={16}
+                  height={16}
+                  style={{
+                    filter: "brightness(0) invert(1)",
+                  }}
+                />
+              </button>
+              <span className="text-xs text-white">Farcaster</span>
+            </div>
           </div>
         </div>
 
