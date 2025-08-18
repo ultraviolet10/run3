@@ -14,10 +14,21 @@ export function ShareDrawer({ isOpen, onClose }: ShareDrawerProps) {
   const shareText = `your favorite daily onchain spectacle ⚔️ @blitzdotfun`;
 
   const handleTwitterShare = () => {
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      shareText
-    )}`;
+    // Get the mini app URL for sharing
+    const appUrl = "https://farcaster.xyz/miniapps/Kb45TQPDPpWb/blitz";
+    const currentUrl =
+      typeof window !== "undefined" ? window.location.href : appUrl;
 
+    // Build Twitter intent URL with proper parameters matching working example
+    const twitterParams = new URLSearchParams({
+      original_referer: encodeURIComponent(currentUrl),
+      ref_src: "twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5E",
+      text: shareText,
+      url: appUrl,
+      hashtags: "Blitz,Zora,CreatorBattles,Onchain",
+    });
+
+    const twitterUrl = `https://x.com/intent/tweet?${twitterParams.toString()}`;
     actions.openUrl(twitterUrl);
   };
 
@@ -30,7 +41,7 @@ export function ShareDrawer({ isOpen, onClose }: ShareDrawerProps) {
 
       // Mini app URL as embed
       const appUrl = "https://farcaster.xyz/miniapps/Kb45TQPDPpWb/blitz";
-      
+
       // Build embeds array with both card image and app URL
       const embeds: string[] = [];
       if (cardImageUrl) embeds.push(cardImageUrl);
@@ -39,7 +50,12 @@ export function ShareDrawer({ isOpen, onClose }: ShareDrawerProps) {
       // Use actions.composeCast for proper Farcaster integration
       await actions.composeCast({
         text: shareText,
-        embeds: embeds.length === 1 ? [embeds[0]] : embeds.length === 2 ? [embeds[0], embeds[1]] : undefined,
+        embeds:
+          embeds.length === 1
+            ? [embeds[0]]
+            : embeds.length === 2
+            ? [embeds[0], embeds[1]]
+            : undefined,
       });
     } catch (error) {
       console.error("Failed to share on Farcaster:", error);
