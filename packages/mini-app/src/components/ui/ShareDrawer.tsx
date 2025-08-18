@@ -28,12 +28,18 @@ export function ShareDrawer({ isOpen, onClose }: ShareDrawerProps) {
         ? `${window.location.origin}/api/waitlist-card?fid=${context.user.fid}`
         : null;
 
-      const embeds = cardImageUrl ? [cardImageUrl] : undefined;
+      // Mini app URL as embed
+      const appUrl = "https://farcaster.xyz/miniapps/Kb45TQPDPpWb/blitz";
+      
+      // Build embeds array with both card image and app URL
+      const embeds: string[] = [];
+      if (cardImageUrl) embeds.push(cardImageUrl);
+      embeds.push(appUrl);
 
       // Use actions.composeCast for proper Farcaster integration
       await actions.composeCast({
         text: shareText,
-        embeds: embeds as [string] | undefined,
+        embeds: embeds.length === 1 ? [embeds[0]] : embeds.length === 2 ? [embeds[0], embeds[1]] : undefined,
       });
     } catch (error) {
       console.error("Failed to share on Farcaster:", error);
