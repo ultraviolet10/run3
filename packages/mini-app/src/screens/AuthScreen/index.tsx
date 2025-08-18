@@ -220,7 +220,7 @@ export function AuthScreen() {
 
       {/* Share Drawer */}
       <ShareDrawer
-        isOpen={true}
+        isOpen={isOpen}
         onClose={closeDrawer}
         creatorName={creatorName}
       />
