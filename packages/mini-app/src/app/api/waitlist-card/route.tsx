@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
             <div tw="flex w-32 h-32 rounded-full overflow-hidden mb-8 items-center justify-center">
               <img
                 src={`${
-                  process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+                  process.env.NEXT_PUBLIC_APP_URL || "https://flipem.xyz"
                 }/icon.png`}
                 alt="Blitz Icon"
                 tw="w-28 h-28 object-contain"
