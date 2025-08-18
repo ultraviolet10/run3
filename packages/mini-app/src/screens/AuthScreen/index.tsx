@@ -12,8 +12,7 @@ export function AuthScreen() {
   const { context } = useMiniApp();
   const { address, connectFarcasterWallet, isConnected, signWaitlistMessage } =
     useFarcasterTransaction();
-  const { isOpen, creatorName, closeDrawer, openWithWaitlistSuccess } =
-    useShareDrawer();
+  const { isOpen, closeDrawer, openWithWaitlistSuccess, openDrawer } = useShareDrawer();
   const { submitToWaitlist, checkWaitlistStatus, isSubmitting } = useWaitlist();
   const [hasJoinedWaitlist, setHasJoinedWaitlist] = useState(false);
   const [isCheckingWaitlist, setIsCheckingWaitlist] = useState(false);
@@ -188,7 +187,7 @@ export function AuthScreen() {
         </div>
 
         {/* Join Waitlist Button */}
-        <div className="pb-12">
+        <div className="pb-4">
           <button
             onClick={handleJoinWaitlist}
             disabled={isSubmitting || hasJoinedWaitlist || isCheckingWaitlist}
@@ -215,14 +214,23 @@ export function AuthScreen() {
               "Join Waitlist"
             )}
           </button>
+
+          {/* Share Link for Waitlist Users */}
+          {hasJoinedWaitlist && (
+            <div className="flex justify-center mt-2">
+              <span
+                onClick={() => openDrawer("Creator Battle")}
+                className="text-[#67CE67] text-sm underline cursor-pointer hover:opacity-80"
+              >
+                Share your entry
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Share Drawer */}
-      <ShareDrawer
-        isOpen={isOpen}
-        onClose={closeDrawer}
-      />
+      <ShareDrawer isOpen={isOpen} onClose={closeDrawer} />
     </div>
   );
 }

@@ -9,47 +9,35 @@ type ShareDrawerProps = {
   onClose: () => void;
 };
 
-export function ShareDrawer({
-  isOpen,
-  onClose,
-}: ShareDrawerProps) {
-  const { context } = useMiniApp();
+export function ShareDrawer({ isOpen, onClose }: ShareDrawerProps) {
+  const { context, actions } = useMiniApp();
   const shareText = `your favorite daily onchain spectacle ⚔️ @blitzdotfun`;
-  const shareUrl = window.location.href;
 
   const handleTwitterShare = () => {
-    // Create dynamic waitlist card image URL
-    const cardImageUrl = context?.user?.fid
-      ? `${window.location.origin}/api/waitlist-card?fid=${context.user.fid}`
-      : null;
-
-    let twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
       shareText
-    )}&url=${encodeURIComponent(shareUrl)}`;
+    )}`;
 
-    // Add image URL if available (Twitter will fetch and display the image)
-    if (cardImageUrl) {
-      twitterUrl += `&media=${encodeURIComponent(cardImageUrl)}`;
-    }
-
-    window.open(twitterUrl, "_blank", "noopener,noreferrer");
+    actions.openUrl(twitterUrl);
   };
 
-  const handleFarcasterShare = () => {
-    // Create dynamic waitlist card image URL
-    const cardImageUrl = context?.user?.fid
-      ? `${window.location.origin}/api/waitlist-card?fid=${context.user.fid}`
-      : null;
+  const handleFarcasterShare = async () => {
+    try {
+      // Create dynamic waitlist card image URL
+      const cardImageUrl = context?.user?.fid
+        ? `${window.location.origin}/api/waitlist-card?fid=${context.user.fid}`
+        : null;
 
-    // Create Farcaster cast with embedded image
-    const farcasterText = encodeURIComponent(shareText);
-    let farcasterUrl = `https://warpcast.com/~/compose?text=${farcasterText}`;
+      const embeds = cardImageUrl ? [cardImageUrl] : undefined;
 
-    if (cardImageUrl) {
-      farcasterUrl += `&embeds[]=${encodeURIComponent(cardImageUrl)}`;
+      // Use actions.composeCast for proper Farcaster integration
+      await actions.composeCast({
+        text: shareText,
+        embeds: embeds as [string] | undefined,
+      });
+    } catch (error) {
+      console.error("Failed to share on Farcaster:", error);
     }
-
-    window.open(farcasterUrl, "_blank", "noopener,noreferrer");
   };
 
   if (!isOpen) return null;
@@ -118,7 +106,6 @@ export function ShareDrawer({
 
           {/* Share Icons */}
           <div className="flex justify-center space-x-6">
-
             {/* X post */}
             <div className="flex flex-col items-center space-y-2">
               <button
