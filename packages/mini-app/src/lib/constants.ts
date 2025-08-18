@@ -22,13 +22,13 @@ export const APP_URL: string = process.env.NEXT_PUBLIC_URL ?? "http://localhost:
  * The name of the mini app as displayed to users.
  * Used in titles, headers, and app store listings.
  */
-export const APP_NAME: string = 'blitz';
+export const APP_NAME: string = 'Blitz';
 
 /**
  * A brief description of the mini app's functionality.
  * Used in app store listings and metadata.
  */
-export const APP_DESCRIPTION: string = 'A Farcaster mini app created with Neynar';
+export const APP_DESCRIPTION: string = 'Creator battles on Zora';
 
 /**
  * The primary category for the mini app.
@@ -40,7 +40,7 @@ export const APP_PRIMARY_CATEGORY: string = 'social';
  * Tags associated with the mini app.
  * Used for search and discovery in app stores.
  */
-export const APP_TAGS: string[] = ['education', 'zora', 'social', 'creator', 'gaming'];
+export const APP_TAGS: string[] = ['zora', 'social', 'creator', 'gaming'];
 
 // --- Asset URLs ---
 /**
@@ -65,7 +65,7 @@ export const APP_SPLASH_URL: string = `${APP_URL}/splash.png`;
  * Background color for the splash screen.
  * Used as fallback when splash image is loading.
  */
-export const APP_SPLASH_BACKGROUND_COLOR: string = '#f7f7f7';
+export const APP_SPLASH_BACKGROUND_COLOR: string = '#5C734E';
 
 /**
  * Account association for the mini app.
