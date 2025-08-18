@@ -12,7 +12,7 @@ type WaitlistButtonProps = {
 
 export function WaitlistButton({ creatorName, className = "" }: WaitlistButtonProps) {
   const { signWaitlistMessage, isLoading, error } = useFarcasterTransaction();
-  const { isOpen, creatorName: shareCreatorName, closeDrawer, openWithWaitlistSuccess } = useShareDrawer();
+  const { isOpen, closeDrawer, openWithWaitlistSuccess } = useShareDrawer();
 
   const handleJoinWaitlist = async () => {
     try {
@@ -49,7 +49,6 @@ export function WaitlistButton({ creatorName, className = "" }: WaitlistButtonPr
       <ShareDrawer
         isOpen={isOpen}
         onClose={closeDrawer}
-        creatorName={shareCreatorName}
       />
     </>
   );
