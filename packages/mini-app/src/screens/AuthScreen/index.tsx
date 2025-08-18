@@ -222,7 +222,6 @@ export function AuthScreen() {
       <ShareDrawer
         isOpen={isOpen}
         onClose={closeDrawer}
-        creatorName={creatorName}
       />
     </div>
   );

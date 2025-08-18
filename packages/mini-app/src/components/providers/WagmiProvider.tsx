@@ -2,12 +2,12 @@ import { createConfig, http, WagmiProvider } from "wagmi";
 import { base, degen, mainnet, optimism, unichain, celo } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { farcasterFrame } from "@farcaster/miniapp-wagmi-connector";
-import { coinbaseWallet, metaMask } from 'wagmi/connectors';
-import { APP_NAME, APP_ICON_URL, APP_URL } from "~/lib/constants";
+// import { coinbaseWallet, metaMask } from 'wagmi/connectors';
+// import { APP_NAME, APP_ICON_URL, APP_URL } from "~/lib/constants";
 // import { useEffect, useState } from "react";
 // import { useConnect, useAccount } from "wagmi";
 import React from "react";
-import { MandatoryFarcasterConnect } from "~/components/ui/MandatoryFarcasterConnect";
+// import { MandatoryFarcasterConnect } from "~/components/ui/MandatoryFarcasterConnect";
 
 // Custom hook for Coinbase Wallet detection and auto-connection
 // COMMENTED OUT - Using mandatory Farcaster connection instead
@@ -57,17 +57,6 @@ export const config = createConfig({
   },
   connectors: [
     farcasterFrame(),
-    coinbaseWallet({
-      appName: APP_NAME,
-      appLogoUrl: APP_ICON_URL,
-      preference: 'all',
-    }),
-    metaMask({
-      dappMetadata: {
-        name: APP_NAME,
-        url: APP_URL,
-      },
-    }),
   ],
 });
 

@@ -7,22 +7,31 @@ import { useMiniApp } from "@neynar/react";
 type ShareDrawerProps = {
   isOpen: boolean;
   onClose: () => void;
-  creatorName?: string;
 };
 
 export function ShareDrawer({
   isOpen,
   onClose,
-  creatorName = "Creator",
 }: ShareDrawerProps) {
   const { context } = useMiniApp();
-  const shareText = `Just joined the waitlist for the ${creatorName} creator battle on Blitz! 🚀 Ready to support and win together. #BlitzCreatorBattle #Crypto`;
+  const shareText = `your favorite daily onchain spectacle ⚔️ @blitzdotfun`;
   const shareUrl = window.location.href;
 
   const handleTwitterShare = () => {
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+    // Create dynamic waitlist card image URL
+    const cardImageUrl = context?.user?.fid
+      ? `${window.location.origin}/api/waitlist-card?fid=${context.user.fid}`
+      : null;
+
+    let twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
       shareText
     )}&url=${encodeURIComponent(shareUrl)}`;
+
+    // Add image URL if available (Twitter will fetch and display the image)
+    if (cardImageUrl) {
+      twitterUrl += `&media=${encodeURIComponent(cardImageUrl)}`;
+    }
+
     window.open(twitterUrl, "_blank", "noopener,noreferrer");
   };
 
