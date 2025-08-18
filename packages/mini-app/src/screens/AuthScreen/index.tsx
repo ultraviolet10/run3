@@ -195,9 +195,7 @@ export function AuthScreen() {
             className="w-full px-6 py-4 text-2xl font-bold rounded-full transition-all duration-200 hover:opacity-90 active:scale-99 text-[#124D04]"
             style={{
               fontFamily: "var(--font-grotesk)",
-              background: hasJoinedWaitlist
-                ? "linear-gradient(90deg, #86EFAC 0%, #4ADE80 100%)"
-                : "linear-gradient(90deg, #A6EC9C 0%, #B8EF92 100%)",
+              background: "linear-gradient(90deg, #A6EC9C 0%, #B8EF92 100%)",
               border: "3px solid #67CE67",
             }}
           >
@@ -209,12 +207,12 @@ export function AuthScreen() {
             ) : isSubmitting ? (
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-5 h-5 border-2 border-[#124D04] border-t-transparent rounded-full animate-spin"></div>
-                <span>joining waitlist ⏳</span>
+                <span>Joining Waitlist ⏳</span>
               </div>
             ) : hasJoinedWaitlist ? (
-              "✓ battle incoming ✓"
+              "✓ Battle Incoming ✓"
             ) : (
-              "join waitlist"
+              "Join Waitlist"
             )}
           </button>
         </div>
