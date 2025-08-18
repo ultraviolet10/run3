@@ -25,7 +25,7 @@ export function ShareDrawer({ isOpen, onClose }: ShareDrawerProps) {
       ref_src: "twsrc%5Etfw%7Ctwcamp%5Ebuttonembed%7Ctwterm%5Eshare%7Ctwgr%5E",
       text: shareText,
       url: appUrl,
-      hashtags: "Blitz,Zora,CreatorBattles,Onchain",
+      // hashtags: "blitz,zora,creatorbattles,onchain",
     });
 
     const twitterUrl = `https://x.com/intent/tweet?${twitterParams.toString()}`;
@@ -44,8 +44,8 @@ export function ShareDrawer({ isOpen, onClose }: ShareDrawerProps) {
 
       // Build embeds array with both card image and app URL
       const embeds: string[] = [];
-      if (cardImageUrl) embeds.push(cardImageUrl);
       embeds.push(appUrl);
+      if (cardImageUrl) embeds.push(cardImageUrl);
 
       // Use actions.composeCast for proper Farcaster integration
       await actions.composeCast({
