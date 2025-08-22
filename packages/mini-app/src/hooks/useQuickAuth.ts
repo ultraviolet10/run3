@@ -7,7 +7,10 @@ import { sdk } from '@farcaster/miniapp-sdk';
  * Represents the current authenticated user state
  */
 interface AuthenticatedUser {
-  /** The user's Farcaster ID (FID) */
+  /** 
+   * The user's Farcaster ID (FID) 
+   * ref: https://docs.farcaster.xyz/reference/contracts/reference/id-registry
+   */
   fid: number;
 }
 
