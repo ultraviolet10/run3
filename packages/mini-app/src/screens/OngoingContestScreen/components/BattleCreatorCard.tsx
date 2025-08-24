@@ -41,11 +41,11 @@ export function BattleCreatorCard({ creator }: BattleCreatorCardProps) {
            }}>
       </div>
       
-      <div className="p-6">
+      <div className="p-4">
         {/* Profile Section */}
-        <div className="flex items-start space-x-4 mb-6">
+        <div className="flex items-start space-x-3 mb-4">
           {/* Avatar */}
-          <div className="w-20 h-20 bg-gray-900 rounded-xl flex items-center justify-center overflow-hidden">
+          <div className="w-14 h-14 bg-gray-900 rounded-xl flex items-center justify-center overflow-hidden">
             <img 
               src={avatar} 
               alt={name}
@@ -60,40 +60,40 @@ export function BattleCreatorCard({ creator }: BattleCreatorCardProps) {
           
           {/* Creator Info */}
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-black mb-1">{name}</h3>
-            <p className="text-gray-500 text-sm mb-3">{handle}</p>
-            <p className="text-gray-600 text-sm">what is &quot;onchain&quot;?</p>
+            <h3 className="text-lg font-bold text-black mb-0.5">{name}</h3>
+            <p className="text-gray-500 text-xs mb-2">{handle}</p>
+            <p className="text-gray-600 text-xs">what is &quot;onchain&quot;?</p>
           </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="grid grid-cols-3 gap-2 mb-3">
           {/* Market Cap */}
-          <div className="bg-gray-100 rounded-lg p-3">
+          <div className="bg-gray-100 rounded-lg p-2">
             <p className="text-xs text-gray-500 mb-1">Market Cap</p>
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-0.5">
               <DownTriangleIcon className="w-3 h-3 text-pink-500" />
-              <span className="text-lg font-bold text-pink-500">{formatMarketCap(marketCap)}</span>
+              <span className="text-sm font-bold text-pink-500">{formatMarketCap(marketCap)}</span>
             </div>
           </div>
           
           {/* Volume */}
-          <div className="bg-gray-100 rounded-lg p-3">
+          <div className="bg-gray-100 rounded-lg p-2">
             <p className="text-xs text-gray-500 mb-1">Volume</p>
-            <span className="text-lg font-bold text-black">$1.683</span>
+            <span className="text-sm font-bold text-black">$1.683</span>
           </div>
           
           {/* Holders */}
-          <div className="bg-gray-100 rounded-lg p-3">
+          <div className="bg-gray-100 rounded-lg p-2">
             <p className="text-xs text-gray-500 mb-1">Holders</p>
-            <span className="text-lg font-bold text-black">4</span>
+            <span className="text-sm font-bold text-black">4</span>
           </div>
         </div>
 
         {/* Buy Button */}
         <button 
           onClick={() => window.open(`https://zora.co/${creator.profile?.handle}`, "_blank", "noopener,noreferrer")}
-          className="w-full bg-lime-400 text-black font-semibold py-3 rounded-full border border-gray-600 hover:bg-lime-300 transition-colors mb-4"
+          className="w-full bg-lime-400 text-black font-semibold py-2.5 rounded-full border border-gray-600 hover:bg-lime-300 transition-colors mb-3 text-sm"
         >
           Buy on Zora
         </button>
@@ -101,18 +101,18 @@ export function BattleCreatorCard({ creator }: BattleCreatorCardProps) {
         {/* Bottom Section */}
         <div className="flex items-center justify-between">
           {/* Pagination Dots */}
-          <div className="flex items-center space-x-2">
-            <div className="w-6 h-2 bg-lime-400 rounded-full"></div>
-            <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-            <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+          <div className="flex items-center space-x-1.5">
+            <div className="w-5 h-1.5 bg-lime-400 rounded-full"></div>
+            <div className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
+            <div className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
           </div>
           
           {/* Top Holders */}
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-0.5">
             {mockTopHolders.slice(0, 3).map((holder, index) => (
               <div 
                 key={index}
-                className="w-6 h-6 bg-gray-400 rounded-full border-2 border-white -ml-1 first:ml-0"
+                className="w-5 h-5 bg-gray-400 rounded-full border-1 border-white -ml-0.5 first:ml-0"
                 style={{ zIndex: 3 - index }}
               >
                 <img 
