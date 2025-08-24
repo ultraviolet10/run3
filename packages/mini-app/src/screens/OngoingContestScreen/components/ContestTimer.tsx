@@ -1,16 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Clock } from "lucide-react";
 
 type ContestTimerProps = {
   contestEndTime: Date;
-};
-
-type TimeUnit = {
-  value: number;
-  label: string;
-  max: number;
 };
 
 export function ContestTimer({ contestEndTime }: ContestTimerProps) {
@@ -20,7 +13,6 @@ export function ContestTimer({ contestEndTime }: ContestTimerProps) {
     minutes: 0,
     seconds: 0,
   });
-  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
     const calculateTimeLeft = () => {
@@ -39,10 +31,6 @@ export function ContestTimer({ contestEndTime }: ContestTimerProps) {
         const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
         setTimeLeft({ days, hours, minutes, seconds });
-        
-        // Trigger animation on seconds change
-        setIsAnimating(true);
-        setTimeout(() => setIsAnimating(false), 200);
       } else {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
@@ -56,82 +44,84 @@ export function ContestTimer({ contestEndTime }: ContestTimerProps) {
 
   const formatTime = (value: number) => value.toString().padStart(2, "0");
 
-  const getProgressPercentage = (value: number, max: number) => {
-    return (value / max) * 100;
+  // Split each time unit into individual digits
+  const getDigits = (value: number) => {
+    const formatted = formatTime(value);
+    return [formatted[0], formatted[1]];
   };
 
-  const timeUnits: TimeUnit[] = [
-    { value: timeLeft.days, label: "DAYS", max: 365 },
-    { value: timeLeft.hours, label: "HRS", max: 24 },
-    { value: timeLeft.minutes, label: "MIN", max: 60 },
-    { value: timeLeft.seconds, label: "SEC", max: 60 },
-  ];
-
   return (
-    <div className="bg-gray-900 border-t border-gray-700 backdrop-blur-sm">
-      <div className="px-4 py-3">
-        {/* Header */}
-        <div className="flex items-center justify-center mb-3">
-          <div className={`flex items-center transition-all duration-200 ${isAnimating ? 'scale-105' : 'scale-100'}`}>
-            <Clock className="w-4 h-4 text-red-500 mr-2 animate-pulse" />
-            <h3 className="text-sm font-bold text-white">
-              Battle Ends In
-            </h3>
-            <Clock className="w-4 h-4 text-red-500 ml-2 animate-pulse" />
-          </div>
+    <div className="bg-lime-400 px-3 py-4 rounded-2xl">
+      {/* Header */}
+      <div className="text-center mb-3">
+        <h3 className="text-sm font-semibold text-black">
+          Battle ends in:
+        </h3>
+      </div>
+
+      {/* Timer Display */}
+      <div className="flex items-center justify-center space-x-1 mb-3">
+        {/* Days */}
+        <div className="flex space-x-0.5">
+          {getDigits(timeLeft.days).map((digit, index) => (
+            <div key={`day-${index}`} className="w-8 h-10 bg-white rounded-md flex items-center justify-center shadow-sm">
+              <span className="text-lg font-bold text-gray-800">{digit}</span>
+            </div>
+          ))}
+        </div>
+        
+        {/* Separator */}
+        <div className="flex flex-col space-y-0.5 mx-0.5">
+          <div className="w-1 h-1 bg-gray-800 rounded-full"></div>
+          <div className="w-1 h-1 bg-gray-800 rounded-full"></div>
         </div>
 
-        {/* Timer Grid */}
-        <div className="grid grid-cols-4 gap-2 mb-3">
-          {timeUnits.map((unit, _index) => (
-            <div key={unit.label} className="text-center">
-              <div className="relative">
-                {/* Background Circle */}
-                <div className="w-12 h-12 mx-auto relative">
-                  <svg className="w-12 h-12 transform -rotate-90" viewBox="0 0 36 36">
-                    <path
-                      className="text-gray-800"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      fill="none"
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    />
-                    <path
-                      className="text-red-500 transition-all duration-1000 ease-out"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      fill="none"
-                      strokeDasharray={`${getProgressPercentage(unit.value, unit.max)}, 100`}
-                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    />
-                  </svg>
-                  
-                  {/* Time Value */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className={`text-sm font-bold text-white transition-all duration-200 ${
-                      isAnimating && unit.label === 'SEC' ? 'scale-110 text-red-400' : ''
-                    }`}>
-                      {formatTime(unit.value)}
-                    </span>
-                  </div>
-                </div>
-                
-                {/* Label */}
-                <div className="text-xs text-gray-400 font-medium mt-1">
-                  {unit.label}
-                </div>
-              </div>
+        {/* Hours */}
+        <div className="flex space-x-0.5">
+          {getDigits(timeLeft.hours).map((digit, index) => (
+            <div key={`hour-${index}`} className="w-8 h-10 bg-white rounded-md flex items-center justify-center shadow-sm">
+              <span className="text-lg font-bold text-gray-800">{digit}</span>
             </div>
           ))}
         </div>
 
-        {/* Status Text */}
-        <div className="text-center">
-          <p className="text-xs text-gray-400 animate-pulse">
-            🔥 Battle is live! Support your creator! 🔥
-          </p>
+        {/* Separator */}
+        <div className="flex flex-col space-y-0.5 mx-0.5">
+          <div className="w-1 h-1 bg-gray-800 rounded-full"></div>
+          <div className="w-1 h-1 bg-gray-800 rounded-full"></div>
         </div>
+
+        {/* Minutes */}
+        <div className="flex space-x-0.5">
+          {getDigits(timeLeft.minutes).map((digit, index) => (
+            <div key={`minute-${index}`} className="w-8 h-10 bg-white rounded-md flex items-center justify-center shadow-sm">
+              <span className="text-lg font-bold text-gray-800">{digit}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Separator */}
+        <div className="flex flex-col space-y-0.5 mx-0.5">
+          <div className="w-1 h-1 bg-gray-800 rounded-full"></div>
+          <div className="w-1 h-1 bg-gray-800 rounded-full"></div>
+        </div>
+
+        {/* Seconds */}
+        <div className="flex space-x-0.5">
+          {getDigits(timeLeft.seconds).map((digit, index) => (
+            <div key={`second-${index}`} className="w-8 h-10 bg-white rounded-md flex items-center justify-center shadow-sm">
+              <span className="text-lg font-bold text-gray-800">{digit}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Labels */}
+      <div className="flex items-center justify-between px-1">
+        <span className="text-xs font-semibold text-gray-800 flex-1 text-center">DAYS</span>
+        <span className="text-xs font-semibold text-gray-800 flex-1 text-center">HOURS</span>
+        <span className="text-xs font-semibold text-gray-800 flex-1 text-center">MINUTES</span>
+        <span className="text-xs font-semibold text-gray-800 flex-1 text-center">SECONDS</span>
       </div>
     </div>
   );

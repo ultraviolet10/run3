@@ -51,10 +51,10 @@ export function ContestTimer({ contestStartTime }: ContestTimerProps) {
   };
 
   return (
-    <div className="bg-lime-400 px-4 py-4">
+    <div className="bg-lime-400 px-3 py-4 rounded-2xl">
       {/* Header */}
-      <div className="text-center mb-4">
-        <h3 className="text-sm font-bold text-black font-syne">
+      <div className="text-center mb-3">
+        <h3 className="text-sm font-semibold text-black">
           Battle starts in:
         </h3>
       </div>
@@ -62,66 +62,66 @@ export function ContestTimer({ contestStartTime }: ContestTimerProps) {
       {/* Timer Display */}
       <div className="flex items-center justify-center space-x-1 mb-3">
         {/* Days */}
-        <div className="flex space-x-1">
+        <div className="flex space-x-0.5">
           {getDigits(timeLeft.days).map((digit, index) => (
-            <div key={`day-${index}`} className="w-8 h-10 bg-white rounded flex items-center justify-center">
-              <span className="text-xl font-bold text-black font-syne">{digit}</span>
+            <div key={`day-${index}`} className="w-8 h-10 bg-white rounded-md flex items-center justify-center shadow-sm">
+              <span className="text-lg font-bold text-gray-800">{digit}</span>
             </div>
           ))}
         </div>
         
         {/* Separator */}
-        <div className="flex flex-col space-y-1 mx-2">
-          <div className="w-1 h-1 bg-black rounded-full"></div>
-          <div className="w-1 h-1 bg-black rounded-full"></div>
+        <div className="flex flex-col space-y-0.5 mx-0.5">
+          <div className="w-1 h-1 bg-gray-800 rounded-full"></div>
+          <div className="w-1 h-1 bg-gray-800 rounded-full"></div>
         </div>
 
         {/* Hours */}
-        <div className="flex space-x-1">
+        <div className="flex space-x-0.5">
           {getDigits(timeLeft.hours).map((digit, index) => (
-            <div key={`hour-${index}`} className="w-8 h-10 bg-white rounded flex items-center justify-center">
-              <span className="text-xl font-bold text-black font-syne">{digit}</span>
+            <div key={`hour-${index}`} className="w-8 h-10 bg-white rounded-md flex items-center justify-center shadow-sm">
+              <span className="text-lg font-bold text-gray-800">{digit}</span>
             </div>
           ))}
         </div>
 
         {/* Separator */}
-        <div className="flex flex-col space-y-1 mx-2">
-          <div className="w-1 h-1 bg-black rounded-full"></div>
-          <div className="w-1 h-1 bg-black rounded-full"></div>
+        <div className="flex flex-col space-y-0.5 mx-0.5">
+          <div className="w-1 h-1 bg-gray-800 rounded-full"></div>
+          <div className="w-1 h-1 bg-gray-800 rounded-full"></div>
         </div>
 
         {/* Minutes */}
-        <div className="flex space-x-1">
+        <div className="flex space-x-0.5">
           {getDigits(timeLeft.minutes).map((digit, index) => (
-            <div key={`minute-${index}`} className="w-8 h-10 bg-white rounded flex items-center justify-center">
-              <span className="text-xl font-bold text-black font-syne">{digit}</span>
+            <div key={`minute-${index}`} className="w-8 h-10 bg-white rounded-md flex items-center justify-center shadow-sm">
+              <span className="text-lg font-bold text-gray-800">{digit}</span>
             </div>
           ))}
         </div>
 
         {/* Separator */}
-        <div className="flex flex-col space-y-1 mx-2">
-          <div className="w-1 h-1 bg-black rounded-full"></div>
-          <div className="w-1 h-1 bg-black rounded-full"></div>
+        <div className="flex flex-col space-y-0.5 mx-0.5">
+          <div className="w-1 h-1 bg-gray-800 rounded-full"></div>
+          <div className="w-1 h-1 bg-gray-800 rounded-full"></div>
         </div>
 
         {/* Seconds */}
-        <div className="flex space-x-1">
+        <div className="flex space-x-0.5">
           {getDigits(timeLeft.seconds).map((digit, index) => (
-            <div key={`second-${index}`} className="w-8 h-10 bg-white rounded flex items-center justify-center">
-              <span className="text-xl font-bold text-black font-syne">{digit}</span>
+            <div key={`second-${index}`} className="w-8 h-10 bg-white rounded-md flex items-center justify-center shadow-sm">
+              <span className="text-lg font-bold text-gray-800">{digit}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Labels */}
-      <div className="flex items-center justify-center space-x-8">
-        <span className="text-xs font-bold text-black font-syne">DAYS</span>
-        <span className="text-xs font-bold text-black font-syne">HOURS</span>
-        <span className="text-xs font-bold text-black font-syne">MINUTES</span>
-        <span className="text-xs font-bold text-black font-syne">SECONDS</span>
+      <div className="flex items-center justify-between px-1">
+        <span className="text-xs font-semibold text-gray-800 flex-1 text-center">DAYS</span>
+        <span className="text-xs font-semibold text-gray-800 flex-1 text-center">HOURS</span>
+        <span className="text-xs font-semibold text-gray-800 flex-1 text-center">MINUTES</span>
+        <span className="text-xs font-semibold text-gray-800 flex-1 text-center">SECONDS</span>
       </div>
     </div>
   );

@@ -8,8 +8,14 @@ import { useUserAddress } from "~/contexts/UserAddressContext";
 
 // Lightning Icon Component
 const LightningIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="currentColor"/>
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="currentColor" />
   </svg>
 );
 
@@ -98,20 +104,18 @@ export function CreatorBattle() {
   }
 
   return (
-    <div className="px-4 py-6">
-      <div className="space-y-6">
-        {creators[0] && <CreatorCard creator={creators[0]} />}
+    <div className="py-4">
+      {creators[0] && <CreatorCard creator={creators[0]} />}
 
-        <div className="flex items-center justify-center py-2">
-          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
-            <div className="text-black">
-              <LightningIcon />
-            </div>
+      <div className="flex items-center justify-center pb-2">
+        <div className="w-12 h-12 bg-lime-400 rounded-full flex items-center justify-center shadow-lg">
+          <div className="text-black">
+            <LightningIcon />
           </div>
         </div>
-
-        {creators[1] && <CreatorCard creator={creators[1]} />}
       </div>
+
+      {creators[1] && <CreatorCard creator={creators[1]} />}
     </div>
   );
 }
